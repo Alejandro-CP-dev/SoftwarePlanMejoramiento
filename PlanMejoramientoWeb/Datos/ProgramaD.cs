@@ -112,6 +112,7 @@ namespace PlanMejoramientoWeb.Datos
                         Estado = dr["Estado"].ToString(),
                         NivelFormacion = new NivelFormacion
                         {
+                            Id = Convert.ToInt32(dr["NivelId"]),
                             Nombre = dr["NivelFormacion"].ToString()
                         }
                     };

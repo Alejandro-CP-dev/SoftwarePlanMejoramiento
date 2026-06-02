@@ -47,15 +47,15 @@
                 ID="pnlAdministrador"
                 runat="server">
 
-                <a href="/Administrador/Inicio.aspx">Inicio</a> |
+                <a href="Inicio.aspx">Inicio</a>             |
                
-                <a href="/Administrador/Programas.aspx">Programas</a> |
+                <a href="Programas.aspx">Programas</a>       |
                
-                <a href="/Administrador/Fichas.aspx">Fichas</a> |
+                <a href="Ficha.aspx">Fichas</a>             |
                
-                <a href="/Administrador/Instructores.aspx">Instructores</a> |
+                <a href="Instructores.aspx">Instructores</a> |
                
-                <a href="/Administrador/Aprendices.aspx">Aprendices</a>
+                <a href="Aprendices.aspx">Aprendices</a>
 
             </asp:Panel>
 

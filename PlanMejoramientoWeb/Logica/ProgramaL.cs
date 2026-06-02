@@ -43,5 +43,10 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oProgramaD.MtEliminarPrograma(id);
         }
+
+        public bool MtActualizarPrograma(Programa programa)
+        {
+            return oProgramaD.MtActualizarPrograma(programa);
+        }
     }
 }
