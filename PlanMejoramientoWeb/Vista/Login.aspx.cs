@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PlanMejoramientoWeb.Logica;
+using PlanMejoramientoWeb.Modelo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,7 +13,42 @@ namespace PlanMejoramientoWeb.Vista
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            
+        }
 
+        protected void btnIngresar_Click(object sender, EventArgs e)
+        {
+            LoginL oLoginL = new LoginL();
+
+            UsuarioSesion usuario = oLoginL.MtIniciarSesion(txtCorreo.Text, txtContrasena.Text);
+
+            if (usuario != null)
+            {
+                Session["Usuario"] = usuario;
+
+                switch (usuario.Rol)
+                {
+                    case "Administrador":
+                        Response.Redirect("Administrador/Inicio.aspx");
+                        break;
+
+                    case "Instructor":
+                        Response.Redirect("Instructor/Inicio.aspx");
+                        break;
+
+                    case "Aprendiz":
+                        Response.Redirect("Aprendiz/Inicio.aspx");
+                        break;
+                }
+            }
+            else
+            {
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(),
+                        "mensaje",
+                        "alert('Correo o contraseña incorrectos');",
+                        true);  
+            }
         }
     }
 }

@@ -1,0 +1,96 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site1.master.cs" Inherits="PlanMejoramientoWeb.Vista.Site1" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+
+            <h1>Plan de Mejoramiento SENA</h1>
+
+            <hr />
+
+            Bienvenido:
+           
+            <asp:Label
+                ID="lblUsuario"
+                runat="server">
+            </asp:Label>
+
+            |
+            Rol:
+           
+            <asp:Label
+                ID="lblRol"
+                runat="server">
+            </asp:Label>
+
+            |
+           
+            <asp:LinkButton
+                ID="btnCerrarSesion"
+                runat="server"
+                OnClick="btnCerrarSesion_Click" >
+                Cerrar Sesión
+            </asp:LinkButton>
+
+            <hr />
+
+            <asp:Panel
+                ID="pnlAdministrador"
+                runat="server">
+
+                <a href="/Administrador/Inicio.aspx">Inicio</a> |
+               
+                <a href="/Administrador/Programas.aspx">Programas</a> |
+               
+                <a href="/Administrador/Fichas.aspx">Fichas</a> |
+               
+                <a href="/Administrador/Instructores.aspx">Instructores</a> |
+               
+                <a href="/Administrador/Aprendices.aspx">Aprendices</a>
+
+            </asp:Panel>
+
+            <asp:Panel
+                ID="pnlInstructor"
+                runat="server">
+
+                <a href="/Instructor/Inicio.aspx">Inicio</a> |
+               
+                <a href="/Instructor/Planes.aspx">Planes</a> |
+               
+                <a href="/Instructor/Evaluaciones.aspx">Evaluaciones</a>
+
+            </asp:Panel>
+
+            <asp:Panel
+                ID="pnlAprendiz"
+                runat="server">
+
+                <a href="/Aprendiz/Inicio.aspx">Inicio</a> |
+               
+                <a href="/Aprendiz/MisPlanes.aspx">Mis Planes</a> |
+               
+                <a href="/Aprendiz/Evidencias.aspx">Evidencias</a>
+
+            </asp:Panel>
+
+            <hr />
+
+            <asp:ContentPlaceHolder
+                ID="MainContent"
+                runat="server">
+            </asp:ContentPlaceHolder>
+
+        </div>
+    </form>
+</body>
+</html>

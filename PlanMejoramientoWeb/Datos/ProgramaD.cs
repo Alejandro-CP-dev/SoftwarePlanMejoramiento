@@ -34,6 +34,7 @@ namespace PlanMejoramientoWeb.Datos
             }
         }
 
+
         public List<Programa> MtListarPrograma()
         {
             List<Programa> lista = new List<Programa>();
@@ -63,11 +64,11 @@ namespace PlanMejoramientoWeb.Datos
                 {
                     lista.Add(new Programa()
                     {
-                        Id = (int)dr["Id"],
+                        Id = Convert.ToInt32(dr["Id"]),
                         Codigo = dr["Codigo"].ToString(),
                         Nombre = dr["Nombre"].ToString(),
                         Version = dr["Version"].ToString(),
-                        Duracion = (int)dr["Duracion"],
+                        Duracion = Convert.ToInt32(dr["Duracion"]),
                         Estado = dr["Estado"].ToString(),
                         NivelFormacion = new NivelFormacion
                         {
@@ -90,7 +91,7 @@ namespace PlanMejoramientoWeb.Datos
                                     SELECT
                                         p.*,
                                         nf.Id AS NivelId,
-                                        nf.Nombre AS NivelNombre
+                                        nf.Nombre AS NivelFormacion
                                     FROM Programa p
                                     INNER JOIN NivelFormacion nf
                                         ON p.IdNivel = nf.Id
@@ -103,7 +104,7 @@ namespace PlanMejoramientoWeb.Datos
                 {
                     programa = new Programa()
                     {
-                        Id = (int)dr["Id"],
+                        Id = Convert.ToInt32(dr["Id"]),
                         Codigo = dr["Codigo"].ToString(),
                         Nombre = dr["Nombre"].ToString(),
                         Version = dr["Version"].ToString(),

@@ -55,14 +55,6 @@ create table Especialidad (
     Nombre varchar(100)
 );
 
-create table InstructorEspecialidad (
-    Id             int identity(1,1) primary key,
-    IdInstructor   int,
-    IdEspecialidad int,
-    foreign key (IdInstructor)   references Instructor(Id),
-    foreign key (IdEspecialidad) references Especialidad(Id)
-);
-
 -- ── Académico ──
 create table CentroFormacion (
     Id       int identity(1,1) primary key,
@@ -125,8 +117,8 @@ create table Administrador (
     Id              int identity(1,1) primary key,
     TipoDocumento   varchar(50),
     NumeroDocumento varchar(50),
-    Nombres         varchar(120),
-    Apellidos       varchar(120),
+    Nombre         varchar(120),
+    Apellido       varchar(120),
     Correo          varchar(255),
     Telefono        varchar(50),
     Contrasena      varchar(255),
@@ -139,8 +131,8 @@ create table Instructor (
     Id              int identity(1,1) primary key,
     TipoDocumento   varchar(50),
     NumeroDocumento varchar(50),
-    Nombres         varchar(120),
-    Apellidos       varchar(120),
+    Nombre          varchar(120),
+    Apellido        varchar(120),
     Correo          varchar(255),
     Telefono        varchar(50),
     Contrasena      varchar(255),
@@ -154,8 +146,8 @@ create table Aprendiz (
     Id                int identity(1,1) primary key,
     TipoDocumento     varchar(50),
     NumeroDocumento   varchar(50),
-    Nombres           varchar(120),
-    Apellidos         varchar(120),
+    Nombre            varchar(120),
+    Apellido          varchar(120),
     Correo            varchar(255),
     Telefono          varchar(50),
     Contrasena        varchar(255),
@@ -236,4 +228,12 @@ create table Evidencia (
     foreign key (IdPlanMejoramiento) references PlanMejoramiento(Id),
     foreign key (IdAprendiz)         references Aprendiz(Id),
     foreign key (IdTipoArchivo)      references TipoArchivo(Id)
+);
+
+create table InstructorEspecialidad (
+    Id             int identity(1,1) primary key,
+    IdInstructor   int,
+    IdEspecialidad int,
+    foreign key (IdInstructor)   references Instructor(Id),
+    foreign key (IdEspecialidad) references Especialidad(Id)
 );
