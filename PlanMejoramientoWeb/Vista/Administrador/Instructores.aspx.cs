@@ -11,12 +11,14 @@ namespace PlanMejoramientoWeb.Vista.Administrador
     public partial class Instructores : System.Web.UI.Page
     {
         private InstructorL oInstructor = new InstructorL();
+        private FichaL oFicha = new FichaL();
+        private FichaInstructorL oFichaInstructor = new FichaInstructorL();
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 MtCargarInstructores();
-
+                MtCargarFichasAsignar();
                 btnActualizar.Visible = false;
 
             }
@@ -26,6 +28,18 @@ namespace PlanMejoramientoWeb.Vista.Administrador
         {
             gvInstructores.DataSource = oInstructor.MtListarInstructor();
             gvInstructores.DataBind();
+        }
+
+        public void MtCargarFichasAsignar()
+        {
+            ddlFichaAsignar.DataSource = oFicha.MtListarFicha();
+            ddlFichaAsignar.DataTextField = "CodigoFicha";
+            ddlFichaAsignar.DataValueField = "Id";
+            ddlFichaAsignar.DataBind();
+
+            ddlFichaAsignar.Items.Insert(
+                0,
+                new ListItem("-- Seleccione --", "0"));
         }
 
         public void MtLimpiarFormulario()
@@ -155,6 +169,106 @@ namespace PlanMejoramientoWeb.Vista.Administrador
         protected void btnLimpiar_Click(object sender, EventArgs e)
         {
             MtLimpiarFormulario();
+        }
+
+        protected void btnAsignarFicha_Click(object sender, EventArgs e)
+        {
+            LinkButton btn = (LinkButton)sender;
+
+            int idInstructor = Convert.ToInt32(btn.CommandArgument);
+
+            Modelo.Instructor instructor =
+                oInstructor.MtObtenerInstructorPorId(idInstructor);
+
+            if (instructor != null)
+            {
+                hfIdInstructor.Value = instructor.Id.ToString();
+
+                lblInstructor.Text =
+                    instructor.Nombre + " " + instructor.Apellido;
+
+                ScriptManager.RegisterStartupScript(
+                    this,
+                    GetType(),
+                    "abrirModal",
+                    @"var modal = new bootstrap.Modal(
+                        document.getElementById('modalAsignarFicha')
+                      );
+                      modal.show();",
+                    true);
+            }
+        }
+
+        protected void btnGuardarAsignacion_Click(object sender, EventArgs e)
+        {
+            if (ddlFichaAsignar.SelectedValue == "0")
+            {
+                ClientScript.RegisterStartupScript(
+                    this.GetType(),
+                    "mensaje",
+                    "alert('Seleccione una ficha');",
+                    true);
+
+                return;
+            }
+
+            Modelo.FichaInstructor asignacion = new Modelo.FichaInstructor()
+            {
+                Ficha = new Modelo.Ficha()
+                {
+                    Id = Convert.ToInt32(
+                    ddlFichaAsignar.SelectedValue)
+                },
+
+                Instructor = new Modelo.Instructor()
+                {
+                    Id = Convert.ToInt32(
+                    hfIdInstructor.Value)
+                }
+            };
+
+            bool resultado =
+                oFichaInstructor.MtRegistrarFichaInstructor(asignacion);
+
+            if (resultado)
+            {
+                ClientScript.RegisterStartupScript(
+                    this.GetType(),
+                    "mensaje",
+                    "alert('Ficha asignada correctamente');",
+                    true);
+
+                ddlFichaAsignar.SelectedIndex = 0;
+            }
+        }
+
+        protected void btnVerFichas_Click(object sender, EventArgs e)
+        {
+            LinkButton btn = (LinkButton)sender;
+
+            int idInstructor =
+                Convert.ToInt32(btn.CommandArgument);
+
+            Modelo.Instructor instructor =
+                oInstructor.MtObtenerInstructorPorId(idInstructor);
+
+            lblNombreInstructor.Text =
+                instructor.Nombre + " " + instructor.Apellido;
+
+            gvFichasInstructor.DataSource =
+                oFichaInstructor.MtListarFichaPorInstructor(idInstructor);
+
+            gvFichasInstructor.DataBind();
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                GetType(),
+                "abrirModal",
+                @"var modal = new bootstrap.Modal(
+            document.getElementById('modalVerFichas')
+          );
+          modal.show();",
+                true);
         }
     }
 }

@@ -33,6 +33,42 @@ namespace PlanMejoramientoWeb.Vista
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// Control pnlAdministrador.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlAdministrador;
+
+        /// <summary>
+        /// Control pnlInstructor.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlInstructor;
+
+        /// <summary>
+        /// Control pnlAprendiz.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlAprendiz;
+
+        /// <summary>
+        /// Control lblIniciales.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblIniciales;
+
+        /// <summary>
         /// Control lblUsuario.
         /// </summary>
         /// <remarks>
@@ -60,31 +96,13 @@ namespace PlanMejoramientoWeb.Vista
         protected global::System.Web.UI.WebControls.LinkButton btnCerrarSesion;
 
         /// <summary>
-        /// Control pnlAdministrador.
+        /// Control lblRolTopbar.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlAdministrador;
-
-        /// <summary>
-        /// Control pnlInstructor.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlInstructor;
-
-        /// <summary>
-        /// Control pnlAprendiz.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlAprendiz;
+        protected global::System.Web.UI.WebControls.Label lblRolTopbar;
 
         /// <summary>
         /// Control MainContent.

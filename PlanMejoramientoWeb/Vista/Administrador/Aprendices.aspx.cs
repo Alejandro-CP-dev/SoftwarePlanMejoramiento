@@ -1,4 +1,5 @@
-﻿using PlanMejoramientoWeb.Logica;
+﻿using PlanMejoramientoWeb.Datos;
+using PlanMejoramientoWeb.Logica;
 using PlanMejoramientoWeb.Modelo;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,15 @@ namespace PlanMejoramientoWeb.Vista.Administrador
     {
         private AprendizL oAprendiz = new AprendizL();
         private EstadoAcademicoL oEstadoAcademico = new EstadoAcademicoL();
+        private FichaL oFicha = new FichaL();
+        private FichaAprendizL oFichaAprendiz = new FichaAprendizL();
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 MtCargarEstadoAcademico();
                 MtCargarAprendices();
+                MtCargarFichasAsignar();
 
                 btnActualizar.Visible = false;
             }
@@ -38,6 +42,19 @@ namespace PlanMejoramientoWeb.Vista.Administrador
         public void MtCargarAprendices()
         {
             gvAprendices.DataSource = oAprendiz.MtListarAprendiz();
+            gvAprendices.DataBind();
+        }
+
+        public void MtCargarFichasAsignar()
+        {
+            ddlFichaAsignar.DataSource = oFicha.MtListarFicha();
+            ddlFichaAsignar.DataTextField = "CodigoFicha";
+            ddlFichaAsignar.DataValueField = "Id";
+            ddlFichaAsignar.DataBind();
+
+            ddlFichaAsignar.Items.Insert(
+                0,
+                new ListItem("-- Seleccione --", "0"));
         }
 
         public void MtLimpiarFormulario()
@@ -181,6 +198,78 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                     "mensaje",
                     "alert('Aprendiz eliminado correctamente');",
                     true);
+            }
+        }
+
+        protected void btnAsignarFicha_Click(object sender, EventArgs e)
+        {
+            LinkButton btn = (LinkButton)sender;
+
+            int idAprendiz = Convert.ToInt32(btn.CommandArgument);
+
+            Modelo.Aprendiz aprendiz =
+                oAprendiz.MtObtenerAprendizPorId(idAprendiz);
+
+            if (aprendiz != null)
+            {
+                hfIdAprendiz.Value = aprendiz.Id.ToString();
+
+                lblAprendiz.Text =
+                    aprendiz.Nombre + " " + aprendiz.Apellido;
+
+                ScriptManager.RegisterStartupScript(
+                    this,
+                    GetType(),
+                    "abrirModal",
+                    @"var modal = new bootstrap.Modal(
+                document.getElementById('modalAsignarFicha')
+              );
+              modal.show();",
+                    true);
+            }
+        }
+
+        protected void btnGuardarAsignacion_Click(object sender, EventArgs e)
+        {
+            if (ddlFichaAsignar.SelectedValue == "0")
+            {
+                ClientScript.RegisterStartupScript(
+                    this.GetType(),
+                    "mensaje",
+                    "alert('Seleccione una ficha');",
+                    true);
+
+                return;
+            }
+
+            Modelo.FichaAprendiz asignacion =
+                new Modelo.FichaAprendiz()
+                {
+                    Ficha = new Modelo.Ficha()
+                    {
+                        Id = Convert.ToInt32(
+                            ddlFichaAsignar.SelectedValue)
+                    },
+
+                    Aprendiz = new Modelo.Aprendiz()
+                    {
+                        Id = Convert.ToInt32(
+                            hfIdAprendiz.Value)
+                    }
+                };
+
+            bool resultado =
+                oFichaAprendiz.MtRegistrarFichaAprendiz(asignacion);
+
+            if (resultado)
+            {
+                ClientScript.RegisterStartupScript(
+                    this.GetType(),
+                    "mensaje",
+                    "alert('Ficha asignada correctamente');",
+                    true);
+
+                ddlFichaAsignar.SelectedIndex = 0;
             }
         }
     }

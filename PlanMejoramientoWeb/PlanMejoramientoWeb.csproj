@@ -81,7 +81,9 @@
     <Compile Include="Datos\AprendizD.cs" />
     <Compile Include="Datos\ConexionDB.cs" />
     <Compile Include="Datos\EstadoAcademicoD.cs" />
+    <Compile Include="Datos\FichaAprendizD.cs" />
     <Compile Include="Datos\FichaD.cs" />
+    <Compile Include="Datos\FichaInstructorD.cs" />
     <Compile Include="Datos\InstructorD.cs" />
     <Compile Include="Datos\JornadaD.cs" />
     <Compile Include="Datos\LoginD.cs" />
@@ -89,6 +91,8 @@
     <Compile Include="Datos\ProgramaD.cs" />
     <Compile Include="Logica\AprendizL.cs" />
     <Compile Include="Logica\EstadoAcademicoL.cs" />
+    <Compile Include="Logica\FichaAprendizL.cs" />
+    <Compile Include="Logica\FichaInstructorL.cs" />
     <Compile Include="Logica\FichaL.cs" />
     <Compile Include="Logica\InstructorL.cs" />
     <Compile Include="Logica\JornadaL.cs" />
@@ -98,6 +102,8 @@
     <Compile Include="Modelo\Aprendiz.cs" />
     <Compile Include="Modelo\EstadoAcademico.cs" />
     <Compile Include="Modelo\Ficha.cs" />
+    <Compile Include="Modelo\FichaAprendiz.cs" />
+    <Compile Include="Modelo\FichaInstructor.cs" />
     <Compile Include="Modelo\Instructor.cs" />
     <Compile Include="Modelo\Jornada.cs" />
     <Compile Include="Modelo\NivelFormacion.cs" />
