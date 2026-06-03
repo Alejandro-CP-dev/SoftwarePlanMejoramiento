@@ -175,6 +175,11 @@
             color: #5f5e5a;
         }
 
+        .btn-Ver{
+            color: black;
+            text-decoration: none;
+        }
+
         .btn-editar, .btn-eliminar, .btn-asignar {
             font-size: 12px;
             background: none;
@@ -455,7 +460,7 @@
                     <asp:TemplateField HeaderText="Fichas Asignadas">
                         <ItemTemplate>
                             <asp:LinkButton ID="btnVerFichas" runat="server"
-                                Text="Ver Fichas" CssClass="color: #212529; text-decoration: none;"
+                                Text="Ver Fichas" CssClass="btn-Ver"
                                 CommandArgument='<%# Eval("Id") %>'
                                 OnClick="btnVerFichas_Click" />
                         </ItemTemplate>

@@ -165,22 +165,31 @@
             border-radius: 20px;
         }
 
-        .badge-Activo {
+        .badge-Certificado {
             background: #E1F5EE;
             color: #085041;
         }
 
-        .badge-Inactivo {
+        .badge-Aplazado {
             background: #f1efe8;
             color: #5f5e5a;
         }
 
-        .badge-En-Formacion {
+        .badge-En-Formación {
             background: #E6F1FB;
             color: #0C447C;
         }
 
-        .badge-Egresado {
+        .badge-RetiroVoluntario {
+            background: #EAF3DE;
+            color: #27500A;
+        }
+
+        .badge-Desertado {
+            background: #fcebeb;
+            color: #791F1F;
+        }
+        .badge-Condicionado {
             background: #EAF3DE;
             color: #27500A;
         }
