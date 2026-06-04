@@ -24,6 +24,24 @@ namespace PlanMejoramientoWeb.Vista.Administrador
         protected global::System.Web.UI.WebControls.HiddenField hfIdAprendiz;
 
         /// <summary>
+        /// Control lblNombreAprendiz.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNombreAprendiz;
+
+        /// <summary>
+        /// Control gvFichasAprendiz.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvFichasAprendiz;
+
+        /// <summary>
         /// Control lblAprendiz.
         /// </summary>
         /// <remarks>

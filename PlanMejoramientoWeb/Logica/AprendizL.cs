@@ -35,5 +35,10 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oAprendizD.MtEliminarAprendiz(id);
         }
+
+        public List<Aprendiz> MtListarAprendicesPorInstructor(int idInstructor)
+        {
+            return oAprendizD.MtListarAprendizPorInstructor(idInstructor);
+        }
     }
 }

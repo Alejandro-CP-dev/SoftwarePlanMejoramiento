@@ -105,5 +105,41 @@ namespace PlanMejoramientoWeb.Datos
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
+        public List<Ficha> MtListarFichasPorAprendiz(int idAprendiz)
+        {
+            List<Ficha> lista = new List<Ficha>();
+
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"
+            SELECT f.*
+            FROM FichaAprendiz fi
+            INNER JOIN Ficha f
+                ON fi.IdFicha = f.Id
+            WHERE fi.IdAprendiz = @IdAprendiz";   
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue(
+                    "@IdAprendiz",
+                    idAprendiz);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new Ficha()
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        CodigoFicha = dr["CodigoFicha"].ToString(),
+                        Estado = dr["Estado"].ToString()
+                    });
+                }
+            }
+
+            return lista;
+        }
     }
 }

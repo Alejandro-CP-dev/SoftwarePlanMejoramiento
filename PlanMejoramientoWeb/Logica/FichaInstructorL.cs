@@ -15,20 +15,17 @@ namespace PlanMejoramientoWeb.Logica
         public bool MtRegistrarFichaInstructor(
             FichaInstructor fichaInstructor)
         {
-            return oFichaInstructorD
-                .MtRegistrarFichaInstructor(fichaInstructor);
+            return oFichaInstructorD.MtRegistrarFichaInstructor(fichaInstructor);
         }
 
-        public List<FichaInstructor> MtListarFichaInstructor()
+        public List<Ficha> MtListarFichaInstructor(int idInstructor)
         {
-            return oFichaInstructorD
-                .MtListarFichaInstructor();
+            return oFichaInstructorD.MtListarFichaInstructor(idInstructor);
         }
 
         public bool MtEliminarFichaInstructor(int id)
         {
-            return oFichaInstructorD
-                .MtEliminarFichaInstructor(id);
+            return oFichaInstructorD.MtEliminarFichaInstructor(id);
         }
 
         public List<Ficha> MtListarFichaPorInstructor(int idInstructor)

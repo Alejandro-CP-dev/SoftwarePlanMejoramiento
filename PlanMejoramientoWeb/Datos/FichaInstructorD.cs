@@ -32,9 +32,9 @@ namespace PlanMejoramientoWeb.Datos
             }
         }
 
-        public List<FichaInstructor> MtListarFichaInstructor()
+        public List<Ficha> MtListarFichaInstructor(int idInstructor)
         {
-            List<FichaInstructor> lista = new List<FichaInstructor>();
+            List<Ficha> lista = new List<Ficha>();
 
             using (SqlConnection conn = ConexionDB.MtAbrirConexion())
             {
@@ -42,45 +42,40 @@ namespace PlanMejoramientoWeb.Datos
 
                 string consulta = @"
                     SELECT
-                        fi.Id,
-
-                        f.Id AS IdFicha,
-                        f.CodigoFicha,
-
-                        i.Id AS IdInstructor,
-                        i.Nombre,
-                        i.Apellido
-
+                        f.*,
+                        j.Id AS IdJornada,
+                        j.Nombre AS NombreJornada
                     FROM FichaInstructor fi
-
                     INNER JOIN Ficha f
                         ON fi.IdFicha = f.Id
-
-                    INNER JOIN Instructor i
-                        ON fi.IdInstructor = i.Id";
+                    INNER JOIN Jornada j
+                        ON f.IdJornada = j.Id
+                    WHERE fi.IdInstructor = @IdInstructor";
 
                 SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@IdInstructor", idInstructor);
 
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
                 {
-                    lista.Add(new FichaInstructor()
+                    lista.Add(new Ficha()
                     {
-                        Id = Convert.ToInt32(dr["Id"]),
 
-                        Ficha = new Ficha()
+                        Id = Convert.ToInt32(dr["Id"]),
+                        CodigoFicha = dr["CodigoFicha"].ToString(),
+                        FechaInicio = DateTime.Parse(dr["FechaInicio"].ToString()),
+                        FechaFinalizacion = DateTime.Parse(dr["FechaFinalizacion"].ToString()),
+
+                        Jornada = new Jornada()
                         {
-                            Id = Convert.ToInt32(dr["IdFicha"]),
-                            CodigoFicha = dr["CodigoFicha"].ToString()
+                            Id = Convert.ToInt32(dr["IdJornada"]),
+                            Nombre = dr["NombreJornada"].ToString()
                         },
 
-                        Instructor = new Instructor()
-                        {
-                            Id = Convert.ToInt32(dr["IdInstructor"]),
-                            Nombre = dr["Nombre"].ToString(),
-                            Apellido = dr["Apellido"].ToString()
-                        }
+                        Estado = dr["Estado"].ToString()
+
                     });
                 }
             }

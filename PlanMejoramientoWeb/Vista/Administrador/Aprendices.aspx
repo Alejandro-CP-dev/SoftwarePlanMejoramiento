@@ -189,6 +189,7 @@
             background: #fcebeb;
             color: #791F1F;
         }
+
         .badge-Condicionado {
             background: #EAF3DE;
             color: #27500A;
@@ -197,6 +198,11 @@
         .badge-Cancelado {
             background: #fcebeb;
             color: #791F1F;
+        }
+
+        .btn-Ver {
+            color: black;
+            text-decoration: none;
         }
 
         .btn-editar, .btn-eliminar, .btn-asignar {
@@ -323,7 +329,53 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
     <asp:HiddenField ID="hfIdAprendiz" runat="server" />
+    <%-- Modal Ver Fichas --%>
+    <div class="modal fade"
+        id="modalVerFichas"
+        tabindex="-1">
 
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5>Fichas Asignadas</h5>
+                </div>
+
+                <div class="modal-body">
+
+                    <asp:Label
+                        ID="lblNombreAprendiz"
+                        runat="server">
+                    </asp:Label>
+
+                    <hr />
+
+                    <asp:GridView
+                        ID="gvFichasAprendiz"
+                        runat="server"
+                        AutoGenerateColumns="false"
+                        CssClass="table table-bordered">
+
+                        <Columns>
+
+                            <asp:BoundField
+                                DataField="CodigoFicha"
+                                HeaderText="Código" />
+
+                            <asp:BoundField
+                                DataField="Estado"
+                                HeaderText="Estado" />
+
+                        </Columns>
+
+                    </asp:GridView>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
     <%-- Modal Asignar Ficha --%>
     <div class="modal fade" id="modalAsignarFicha" tabindex="-1">
         <div class="modal-dialog">
@@ -424,7 +476,14 @@
                     <asp:BoundField DataField="Apellido" HeaderText="Apellido" />
                     <asp:BoundField DataField="Correo" HeaderText="Correo" />
                     <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
-
+                    <asp:TemplateField HeaderText="Fichas Asignadas">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="btnVerFichas" runat="server"
+                                Text="Ver Fichas" CssClass="btn-Ver"
+                                CommandArgument='<%# Eval("Id") %>'
+                                OnClick="btnVerFichas_Click" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Estado Académico">
                         <ItemTemplate>
                             <span class="badge badge-<%# Eval("EstadoAcademico.Nombre")?.ToString().Replace(" ","-") %>">

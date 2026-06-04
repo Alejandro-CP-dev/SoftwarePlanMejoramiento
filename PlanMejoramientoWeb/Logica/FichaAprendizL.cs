@@ -19,6 +19,11 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oFichaAprendiz.MtListarFichaAprendiz();
         }
-        
+
+        public List<Ficha> MtListarFichaPorAprendiz(int idAprendiz)
+        {
+            return oFichaAprendiz.MtListarFichasPorAprendiz(idAprendiz);
+        }
+
     }
 }

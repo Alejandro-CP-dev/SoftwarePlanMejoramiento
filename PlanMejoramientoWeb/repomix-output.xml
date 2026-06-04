@@ -975,6 +975,42 @@ namespace PlanMejoramientoWeb.Datos
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
+        public List<Ficha> MtListarFichasPorAprendiz(int idAprendiz)
+        {
+            List<Ficha> lista = new List<Ficha>();
+
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"
+            SELECT f.*
+            FROM FichaAprendiz fi
+            INNER JOIN Ficha f
+                ON fi.IdFicha = f.Id
+            WHERE fi.IdAprendiz = @IdAprendiz";   
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue(
+                    "@IdAprendiz",
+                    idAprendiz);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new Ficha()
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        CodigoFicha = dr["CodigoFicha"].ToString(),
+                        Estado = dr["Estado"].ToString()
+                    });
+                }
+            }
+
+            return lista;
+        }
     }
 }
 </file>
@@ -1288,6 +1324,43 @@ namespace PlanMejoramientoWeb.Datos
 
                 return cmd.ExecuteNonQuery() > 0;
             }
+        }
+
+        public List<Ficha> MtListarFichasPorInstructor(int idInstructor)
+        {
+            List<Ficha> lista = new List<Ficha>();
+
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"
+            SELECT f.*
+            FROM FichaInstructor fi
+            INNER JOIN Ficha f
+                ON fi.IdFicha = f.Id
+            WHERE fi.IdInstructor = @IdInstructor";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue(
+                    "@IdInstructor",
+                    idInstructor);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new Ficha()
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        CodigoFicha = dr["CodigoFicha"].ToString(),
+                        Estado = dr["Estado"].ToString()
+                    });
+                }
+            }
+
+            return lista;
         }
     }
 }
@@ -2010,7 +2083,12 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oFichaAprendiz.MtListarFichaAprendiz();
         }
-        
+
+        public List<Ficha> MtListarFichaPorAprendiz(int idAprendiz)
+        {
+            return oFichaAprendiz.MtListarFichasPorAprendiz(idAprendiz);
+        }
+
     }
 }
 </file>
@@ -2047,6 +2125,11 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oFichaInstructorD
                 .MtEliminarFichaInstructor(id);
+        }
+
+        public List<Ficha> MtListarFichaPorInstructor(int idInstructor)
+        {
+            return oFichaInstructorD.MtListarFichasPorInstructor(idInstructor);
         }
     }
 }
@@ -2943,22 +3026,32 @@ using System.Runtime.InteropServices;
             border-radius: 20px;
         }
 
-        .badge-Activo {
+        .badge-Certificado {
             background: #E1F5EE;
             color: #085041;
         }
 
-        .badge-Inactivo {
+        .badge-Aplazado {
             background: #f1efe8;
             color: #5f5e5a;
         }
 
-        .badge-En-Formacion {
+        .badge-En-Formación {
             background: #E6F1FB;
             color: #0C447C;
         }
 
-        .badge-Egresado {
+        .badge-RetiroVoluntario {
+            background: #EAF3DE;
+            color: #27500A;
+        }
+
+        .badge-Desertado {
+            background: #fcebeb;
+            color: #791F1F;
+        }
+
+        .badge-Condicionado {
             background: #EAF3DE;
             color: #27500A;
         }
@@ -2966,6 +3059,11 @@ using System.Runtime.InteropServices;
         .badge-Cancelado {
             background: #fcebeb;
             color: #791F1F;
+        }
+
+        .btn-Ver {
+            color: black;
+            text-decoration: none;
         }
 
         .btn-editar, .btn-eliminar, .btn-asignar {
@@ -3092,7 +3190,53 @@ using System.Runtime.InteropServices;
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
     <asp:HiddenField ID="hfIdAprendiz" runat="server" />
+    <%-- Modal Ver Fichas --%>
+    <div class="modal fade"
+        id="modalVerFichas"
+        tabindex="-1">
 
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5>Fichas Asignadas</h5>
+                </div>
+
+                <div class="modal-body">
+
+                    <asp:Label
+                        ID="lblNombreAprendiz"
+                        runat="server">
+                    </asp:Label>
+
+                    <hr />
+
+                    <asp:GridView
+                        ID="gvFichasAprendiz"
+                        runat="server"
+                        AutoGenerateColumns="false"
+                        CssClass="table table-bordered">
+
+                        <Columns>
+
+                            <asp:BoundField
+                                DataField="CodigoFicha"
+                                HeaderText="Código" />
+
+                            <asp:BoundField
+                                DataField="Estado"
+                                HeaderText="Estado" />
+
+                        </Columns>
+
+                    </asp:GridView>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
     <%-- Modal Asignar Ficha --%>
     <div class="modal fade" id="modalAsignarFicha" tabindex="-1">
         <div class="modal-dialog">
@@ -3193,7 +3337,14 @@ using System.Runtime.InteropServices;
                     <asp:BoundField DataField="Apellido" HeaderText="Apellido" />
                     <asp:BoundField DataField="Correo" HeaderText="Correo" />
                     <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
-
+                    <asp:TemplateField HeaderText="Fichas Asignadas">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="btnVerFichas" runat="server"
+                                Text="Ver Fichas" CssClass="btn-Ver"
+                                CommandArgument='<%# Eval("Id") %>'
+                                OnClick="btnVerFichas_Click" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Estado Académico">
                         <ItemTemplate>
                             <span class="badge badge-<%# Eval("EstadoAcademico.Nombre")?.ToString().Replace(" ","-") %>">
@@ -3504,6 +3655,31 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                 ddlFichaAsignar.SelectedIndex = 0;
             }
         }
+
+        protected void btnVerFichas_Click(object sender, EventArgs e)
+        {
+            LinkButton btn = (LinkButton)sender;
+
+            int idAprendiz = Convert.ToInt32(btn.CommandArgument);
+
+            Modelo.Aprendiz aprendiz = oAprendiz.MtObtenerAprendizPorId(idAprendiz);
+
+            lblNombreAprendiz.Text = aprendiz.Nombre + " " + aprendiz.Apellido;
+
+            gvFichasAprendiz.DataSource = oFichaAprendiz.MtListarFichaPorAprendiz(idAprendiz);
+
+            gvFichasAprendiz.DataBind();
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                GetType(),
+                "abrirModal",
+                @"var modal = new bootstrap.Modal(
+            document.getElementById('modalVerFichas')
+          );
+          modal.show();",
+                true);
+        }
     }
 }
 </file>
@@ -3533,6 +3709,24 @@ namespace PlanMejoramientoWeb.Vista.Administrador
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hfIdAprendiz;
+
+        /// <summary>
+        /// Control lblNombreAprendiz.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNombreAprendiz;
+
+        /// <summary>
+        /// Control gvFichasAprendiz.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvFichasAprendiz;
 
         /// <summary>
         /// Control lblAprendiz.
@@ -4723,12 +4917,15 @@ namespace PlanMejoramientoWeb.Vista.Administrador
         private AprendizL oAprendizL = new AprendizL();
         protected void Page_Load(object sender, EventArgs e)
         {
-            CargarMetricas();
-            CargarRecientes();
+            if (!IsPostBack)
+            {
+                CargarMetricas();
+                CargarRecientes();
+            }
+            
         }
         private void CargarMetricas()
         {
-            // Reemplaza con tus servicios/repositorios reales
             lblTotalProgramas.Text = oPrograma.MtListarPrograma().Count.ToString();
             lblTotalFichas.Text = oFichaL.MtListarFicha().Count.ToString();
             lblTotalInstructores.Text = oInstructorL.MtListarInstructor().Count.ToString();
@@ -5000,6 +5197,11 @@ namespace PlanMejoramientoWeb.Vista.Administrador
             color: #5f5e5a;
         }
 
+        .btn-Ver{
+            color: black;
+            text-decoration: none;
+        }
+
         .btn-editar, .btn-eliminar, .btn-asignar {
             font-size: 12px;
             background: none;
@@ -5124,7 +5326,53 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
     <asp:HiddenField ID="hfIdInstructor" runat="server" />
+    <%-- Modal Ver Fichas --%>
+    <div class="modal fade"
+        id="modalVerFichas"
+        tabindex="-1">
 
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5>Fichas Asignadas</h5>
+                </div>
+
+                <div class="modal-body">
+
+                    <asp:Label
+                        ID="lblNombreInstructor"
+                        runat="server">
+                </asp:Label>
+
+                    <hr />
+
+                    <asp:GridView
+                        ID="gvFichasInstructor"
+                        runat="server"
+                        AutoGenerateColumns="false"
+                        CssClass="table table-bordered">
+
+                        <Columns>
+
+                            <asp:BoundField
+                                DataField="CodigoFicha"
+                                HeaderText="Código" />
+
+                            <asp:BoundField
+                                DataField="Estado"
+                                HeaderText="Estado" />
+
+                        </Columns>
+
+                    </asp:GridView>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
     <%-- Modal Asignar Ficha --%>
     <div class="modal fade" id="modalAsignarFicha" tabindex="-1">
         <div class="modal-dialog">
@@ -5230,6 +5478,15 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                     <asp:BoundField DataField="Apellido" HeaderText="Apellido" />
                     <asp:BoundField DataField="Correo" HeaderText="Correo" />
                     <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
+
+                    <asp:TemplateField HeaderText="Fichas Asignadas">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="btnVerFichas" runat="server"
+                                Text="Ver Fichas" CssClass="btn-Ver"
+                                CommandArgument='<%# Eval("Id") %>'
+                                OnClick="btnVerFichas_Click" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
 
                     <asp:TemplateField HeaderText="Estado">
                         <ItemTemplate>
@@ -5508,6 +5765,35 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                 ddlFichaAsignar.SelectedIndex = 0;
             }
         }
+
+        protected void btnVerFichas_Click(object sender, EventArgs e)
+        {
+            LinkButton btn = (LinkButton)sender;
+
+            int idInstructor =
+                Convert.ToInt32(btn.CommandArgument);
+
+            Modelo.Instructor instructor =
+                oInstructor.MtObtenerInstructorPorId(idInstructor);
+
+            lblNombreInstructor.Text =
+                instructor.Nombre + " " + instructor.Apellido;
+
+            gvFichasInstructor.DataSource =
+                oFichaInstructor.MtListarFichaPorInstructor(idInstructor);
+
+            gvFichasInstructor.DataBind();
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                GetType(),
+                "abrirModal",
+                @"var modal = new bootstrap.Modal(
+            document.getElementById('modalVerFichas')
+          );
+          modal.show();",
+                true);
+        }
     }
 }
 </file>
@@ -5537,6 +5823,24 @@ namespace PlanMejoramientoWeb.Vista.Administrador
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hfIdInstructor;
+
+        /// <summary>
+        /// Control lblNombreInstructor.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNombreInstructor;
+
+        /// <summary>
+        /// Control gvFichasInstructor.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvFichasInstructor;
 
         /// <summary>
         /// Control lblInstructor.

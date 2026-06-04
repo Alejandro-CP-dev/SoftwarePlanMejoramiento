@@ -25,7 +25,9 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                 MtCargarFichasAsignar();
 
                 btnActualizar.Visible = false;
+
             }
+            ddlEstadoAcademico.Visible = false;
         }
 
         public void MtCargarEstadoAcademico()
@@ -90,8 +92,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
                 EstadoAcademico = new EstadoAcademico()
                 {
-                    Id = Convert.ToInt32(
-                        ddlEstadoAcademico.SelectedValue)
+                    Id = 1
                 }
 
             };
@@ -127,8 +128,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
                 EstadoAcademico = new EstadoAcademico()
                 {
-                    Id = Convert.ToInt32(
-                        ddlEstadoAcademico.SelectedValue)
+                    Id = Convert.ToInt32(ddlEstadoAcademico.SelectedValue)
                 }
             };
 
@@ -176,6 +176,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
                 btnGuardar.Visible = false;
                 btnActualizar.Visible = true;
+                ddlEstadoAcademico.Visible = true;
             }
         }
 
@@ -271,6 +272,31 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
                 ddlFichaAsignar.SelectedIndex = 0;
             }
+        }
+
+        protected void btnVerFichas_Click(object sender, EventArgs e)
+        {
+            LinkButton btn = (LinkButton)sender;
+
+            int idAprendiz = Convert.ToInt32(btn.CommandArgument);
+
+            Modelo.Aprendiz aprendiz = oAprendiz.MtObtenerAprendizPorId(idAprendiz);
+
+            lblNombreAprendiz.Text = aprendiz.Nombre + " " + aprendiz.Apellido;
+
+            gvFichasAprendiz.DataSource = oFichaAprendiz.MtListarFichaPorAprendiz(idAprendiz);
+
+            gvFichasAprendiz.DataBind();
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                GetType(),
+                "abrirModal",
+                @"var modal = new bootstrap.Modal(
+            document.getElementById('modalVerFichas')
+          );
+          modal.show();",
+                true);
         }
     }
 }

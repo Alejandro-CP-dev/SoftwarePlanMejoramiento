@@ -279,17 +279,19 @@
             <%-- Menú Instructor --%>
             <asp:Panel ID="pnlInstructor" runat="server" CssClass="sb-section">
                 <span class="sb-section-label">Instructor</span>
-                <a href="/Instructor/Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
-                <a href="/Instructor/Planes.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Planes</a>
-                <a href="/Instructor/Evaluaciones.aspx" class="sb-link"><i class="ti ti-checklist"></i>Evaluaciones</a>
+                <a href="Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
+                <a href="Planes.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Planes</a>
+                <a href="Evaluaciones.aspx" class="sb-link"><i class="ti ti-checklist"></i>Evaluaciones</a>
+                <a href="Aprendices.aspx" class="sb-link"><i class="ti ti-school"></i>Aprendices</a>
+
             </asp:Panel>
 
             <%-- Menú Aprendiz --%>
             <asp:Panel ID="pnlAprendiz" runat="server" CssClass="sb-section">
                 <span class="sb-section-label">Aprendiz</span>
-                <a href="/Aprendiz/Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
-                <a href="/Aprendiz/MisPlanes.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Mis Planes</a>
-                <a href="/Aprendiz/Evidencias.aspx" class="sb-link"><i class="ti ti-file-upload"></i>Evidencias</a>
+                <a href="Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
+                <a href="MisPlanes.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Mis Planes</a>
+                <a href="Evidencias.aspx" class="sb-link"><i class="ti ti-file-upload"></i>Evidencias</a>
             </asp:Panel>
 
             <div class="sb-bottom">

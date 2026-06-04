@@ -73,6 +73,7 @@
     <Content Include="Vista\Administrador\Instructores.aspx" />
     <Content Include="Vista\Administrador\Programas.aspx" />
     <Content Include="Vista\Aprendiz\Inicio.aspx" />
+    <Content Include="Vista\Instructor\Aprendices.aspx" />
     <Content Include="Vista\Instructor\Inicio.aspx" />
     <Content Include="Vista\Login.aspx" />
     <Content Include="Web.config" />
@@ -88,6 +89,7 @@
     <Compile Include="Datos\JornadaD.cs" />
     <Compile Include="Datos\LoginD.cs" />
     <Compile Include="Datos\NivelFormacionD.cs" />
+    <Compile Include="Datos\PlanMejoramientoD.cs" />
     <Compile Include="Datos\ProgramaD.cs" />
     <Compile Include="Logica\AprendizL.cs" />
     <Compile Include="Logica\EstadoAcademicoL.cs" />
@@ -98,8 +100,10 @@
     <Compile Include="Logica\JornadaL.cs" />
     <Compile Include="Logica\LoginL.cs" />
     <Compile Include="Logica\NivelFormacionL.cs" />
+    <Compile Include="Logica\PlanMejoramientoL.cs" />
     <Compile Include="Logica\ProgramaL.cs" />
     <Compile Include="Modelo\Aprendiz.cs" />
+    <Compile Include="Modelo\AprendizPlan.cs" />
     <Compile Include="Modelo\EstadoAcademico.cs" />
     <Compile Include="Modelo\Ficha.cs" />
     <Compile Include="Modelo\FichaAprendiz.cs" />
@@ -107,7 +111,9 @@
     <Compile Include="Modelo\Instructor.cs" />
     <Compile Include="Modelo\Jornada.cs" />
     <Compile Include="Modelo\NivelFormacion.cs" />
+    <Compile Include="Modelo\PlanMejoramiento.cs" />
     <Compile Include="Modelo\Programa.cs" />
+    <Compile Include="Modelo\TipoPlan.cs" />
     <Compile Include="Modelo\UsuarioSesion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vista\Administrador\Aprendices.aspx.cs">
@@ -151,6 +157,13 @@
     </Compile>
     <Compile Include="Vista\Aprendiz\Inicio.aspx.designer.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\Instructor\Aprendices.aspx.cs">
+      <DependentUpon>Aprendices.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Vista\Instructor\Aprendices.aspx.designer.cs">
+      <DependentUpon>Aprendices.aspx</DependentUpon>
     </Compile>
     <Compile Include="Vista\Instructor\Inicio.aspx.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>

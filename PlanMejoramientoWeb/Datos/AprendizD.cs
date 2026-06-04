@@ -195,5 +195,96 @@ namespace PlanMejoramientoWeb.Datos
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
+
+        public List<Aprendiz> MtListarAprendizPorInstructor(int idInstructor)
+        {
+            List<Aprendiz> lista = new List<Aprendiz>();
+
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"SELECT DISTINCT
+                                        a.*,
+                                        ea.Id AS IdEstadoAcademico,
+                                        ea.Nombre AS EstadoAcademico
+                                    FROM Instructor i
+
+                                    INNER JOIN FichaInstructor fi
+                                        ON i.Id = fi.IdInstructor
+
+                                    INNER JOIN FichaAprendiz fa
+                                        ON fi.IdFicha = fa.IdFicha
+
+                                    INNER JOIN Aprendiz a
+                                        ON fa.IdAprendiz = a.Id
+
+                                    INNER JOIN EstadoAcademico ea
+                                        ON a.IdEstadoAcademico = ea.Id
+
+                                    WHERE i.Id = @IdInstructor";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@IdInstructor", idInstructor);
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new Aprendiz()
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        NumeroDocumento = dr["NumeroDocumento"].ToString(),
+                        Nombre = dr["Nombre"].ToString(),
+                        Apellido = dr["Apellido"].ToString(),
+                        Correo = dr["Correo"].ToString(),
+                        Telefono = dr["Telefono"].ToString(),
+
+                        EstadoAcademico = new EstadoAcademico()
+                        {
+                            Id = Convert.ToInt32(dr["IdEstadoAcademico"]),
+                            Nombre = dr["EstadoAcademico"].ToString()
+                        }
+                    });
+                }
+            }
+            return lista;
+        }
+
+        public bool MtRegistrarAprendizPlan(AprendizPlan asignacion)
+        {
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"INSERT INTO AprendizPlan
+                                    (
+                                        IdAprendiz,
+                                        IdPlanMejoramiento,
+                                        Estado,
+                                        Observacion,
+                                        FechaAsignacion
+                                    )
+                                    VALUES
+                                    (
+                                        @IdAprendiz,
+                                        @IdPlanMejoramiento,
+                                        @Estado,
+                                        @Observacion,
+                                        @FechaAsignacion
+                                    )";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@IdAprendiz", asignacion.Aprendiz);
+                cmd.Parameters.AddWithValue("@IdPlanMejoramiento", asignacion.PlanMejoramiento.Id);
+                cmd.Parameters.AddWithValue("@Estado", asignacion.Estado);
+                cmd.Parameters.AddWithValue("@Observacion", asignacion.Observacion);
+                cmd.Parameters.AddWithValue("@FechaAsignacion", asignacion.FechaAsignacion);
+
+                return cmd.ExecuteNonQuery() > 0;
+
+            }
+        }
     }
 }
