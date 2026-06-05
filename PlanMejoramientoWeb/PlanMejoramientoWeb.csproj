@@ -74,12 +74,14 @@
     <Content Include="Vista\Administrador\Programas.aspx" />
     <Content Include="Vista\Aprendiz\Inicio.aspx" />
     <Content Include="Vista\Instructor\Aprendices.aspx" />
+    <Content Include="Vista\Instructor\CrearPlan.aspx" />
     <Content Include="Vista\Instructor\Inicio.aspx" />
     <Content Include="Vista\Login.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Datos\AprendizD.cs" />
+    <Compile Include="Datos\AprendizPlanD.cs" />
     <Compile Include="Datos\ConexionDB.cs" />
     <Compile Include="Datos\EstadoAcademicoD.cs" />
     <Compile Include="Datos\FichaAprendizD.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="Datos\PlanMejoramientoD.cs" />
     <Compile Include="Datos\ProgramaD.cs" />
     <Compile Include="Logica\AprendizL.cs" />
+    <Compile Include="Logica\AprendizPlanL.cs" />
     <Compile Include="Logica\EstadoAcademicoL.cs" />
     <Compile Include="Logica\FichaAprendizL.cs" />
     <Compile Include="Logica\FichaInstructorL.cs" />
@@ -164,6 +167,13 @@
     </Compile>
     <Compile Include="Vista\Instructor\Aprendices.aspx.designer.cs">
       <DependentUpon>Aprendices.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\Instructor\CrearPlan.aspx.cs">
+      <DependentUpon>CrearPlan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Vista\Instructor\CrearPlan.aspx.designer.cs">
+      <DependentUpon>CrearPlan.aspx</DependentUpon>
     </Compile>
     <Compile Include="Vista\Instructor\Inicio.aspx.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>

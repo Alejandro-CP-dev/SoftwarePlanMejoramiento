@@ -18,12 +18,9 @@ namespace PlanMejoramientoWeb.Vista.Instructor
         }
         public void MtCargarAprendices()
         {
-            UsuarioSesion usuario =
-                Session["Usuario"] as UsuarioSesion;
+            UsuarioSesion usuario = Session["Usuario"] as UsuarioSesion;
 
-            gvAprendices.DataSource =
-                oAprendiz.MtListarAprendicesPorInstructor(
-                    usuario.Id);
+            gvAprendices.DataSource = oAprendiz.MtListarAprendicesPorInstructor(usuario.Id);
 
             gvAprendices.DataBind();
         }
