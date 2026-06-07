@@ -74,7 +74,7 @@
     <Content Include="Vista\Administrador\Programas.aspx" />
     <Content Include="Vista\Aprendiz\Inicio.aspx" />
     <Content Include="Vista\Instructor\Aprendices.aspx" />
-    <Content Include="Vista\Instructor\CrearPlan.aspx" />
+    <Content Include="Vista\Instructor\GestionarPlan.aspx" />
     <Content Include="Vista\Instructor\Inicio.aspx" />
     <Content Include="Vista\Login.aspx" />
     <Content Include="Web.config" />
@@ -168,12 +168,12 @@
     <Compile Include="Vista\Instructor\Aprendices.aspx.designer.cs">
       <DependentUpon>Aprendices.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Vista\Instructor\CrearPlan.aspx.cs">
-      <DependentUpon>CrearPlan.aspx</DependentUpon>
+    <Compile Include="Vista\Instructor\GestionarPlan.aspx.cs">
+      <DependentUpon>GestionarPlan.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Vista\Instructor\CrearPlan.aspx.designer.cs">
-      <DependentUpon>CrearPlan.aspx</DependentUpon>
+    <Compile Include="Vista\Instructor\GestionarPlan.aspx.designer.cs">
+      <DependentUpon>GestionarPlan.aspx</DependentUpon>
     </Compile>
     <Compile Include="Vista\Instructor\Inicio.aspx.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>

@@ -24,5 +24,15 @@ namespace PlanMejoramientoWeb.Vista.Instructor
 
             gvAprendices.DataBind();
         }
+
+        protected void btnVerPlanes_Click(object sender, EventArgs e)
+        {
+            LinkButton btn = (LinkButton)sender;
+
+            int idAprendiz =
+                Convert.ToInt32(btn.CommandArgument);
+
+            Response.Redirect("GestionarPlan.aspx?idAprendiz=" + idAprendiz);
+        }
     }
 }

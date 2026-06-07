@@ -15,5 +15,15 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oAprendizPlan.MtRegistrarAprendizPlan(asignacion);
         }
+
+        public PlanMejoramiento MtObtenerPlanActivo(int idAprendiz)
+        {
+            return oAprendizPlan.MtObtenerPlanActivo(idAprendiz);
+        }
+
+        public List<AprendizPlan> MtListarPlanesPorInstructor(int idInstructor)
+        {
+            return oAprendizPlan.MtListarPlanesPorInstructor(idInstructor);
+        }
     }
 }

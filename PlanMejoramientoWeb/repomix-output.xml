@@ -42,6 +42,7 @@ The content is organized as follows:
 <directory_structure>
 .gitignore
 Datos/AprendizD.cs
+Datos/AprendizPlanD.cs
 Datos/ConexionDB.cs
 Datos/EstadoAcademicoD.cs
 Datos/FichaAprendizD.cs
@@ -51,8 +52,10 @@ Datos/InstructorD.cs
 Datos/JornadaD.cs
 Datos/LoginD.cs
 Datos/NivelFormacionD.cs
+Datos/PlanMejoramientoD.cs
 Datos/ProgramaD.cs
 Logica/AprendizL.cs
+Logica/AprendizPlanL.cs
 Logica/EstadoAcademicoL.cs
 Logica/FichaAprendizL.cs
 Logica/FichaInstructorL.cs
@@ -61,8 +64,10 @@ Logica/InstructorL.cs
 Logica/JornadaL.cs
 Logica/LoginL.cs
 Logica/NivelFormacionL.cs
+Logica/PlanMejoramientoL.cs
 Logica/ProgramaL.cs
 Modelo/Aprendiz.cs
+Modelo/AprendizPlan.cs
 Modelo/EstadoAcademico.cs
 Modelo/Ficha.cs
 Modelo/FichaAprendiz.cs
@@ -70,7 +75,9 @@ Modelo/FichaInstructor.cs
 Modelo/Instructor.cs
 Modelo/Jornada.cs
 Modelo/NivelFormacion.cs
+Modelo/PlanMejoramiento.cs
 Modelo/Programa.cs
+Modelo/TipoPlan.cs
 Modelo/UsuarioSesion.cs
 packages.config
 PlanMejoramientoWeb.csproj
@@ -94,6 +101,12 @@ Vista/Administrador/Programas.aspx.designer.cs
 Vista/Aprendiz/Inicio.aspx
 Vista/Aprendiz/Inicio.aspx.cs
 Vista/Aprendiz/Inicio.aspx.designer.cs
+Vista/Instructor/Aprendices.aspx
+Vista/Instructor/Aprendices.aspx.cs
+Vista/Instructor/Aprendices.aspx.designer.cs
+Vista/Instructor/GestionarPlan.aspx
+Vista/Instructor/GestionarPlan.aspx.cs
+Vista/Instructor/GestionarPlan.aspx.designer.cs
 Vista/Instructor/Inicio.aspx
 Vista/Instructor/Inicio.aspx.cs
 Vista/Instructor/Inicio.aspx.designer.cs
@@ -794,6 +807,146 @@ namespace PlanMejoramientoWeb.Datos
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
+
+        public List<Aprendiz> MtListarAprendizPorInstructor(int idInstructor)
+        {
+            List<Aprendiz> lista = new List<Aprendiz>();
+
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"SELECT DISTINCT
+                                        a.*,
+                                        ea.Id AS IdEstadoAcademico,
+                                        ea.Nombre AS EstadoAcademico
+                                    FROM Instructor i
+
+                                    INNER JOIN FichaInstructor fi
+                                        ON i.Id = fi.IdInstructor
+
+                                    INNER JOIN FichaAprendiz fa
+                                        ON fi.IdFicha = fa.IdFicha
+
+                                    INNER JOIN Aprendiz a
+                                        ON fa.IdAprendiz = a.Id
+
+                                    INNER JOIN EstadoAcademico ea
+                                        ON a.IdEstadoAcademico = ea.Id
+
+                                    WHERE i.Id = @IdInstructor";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@IdInstructor", idInstructor);
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new Aprendiz()
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        NumeroDocumento = dr["NumeroDocumento"].ToString(),
+                        Nombre = dr["Nombre"].ToString(),
+                        Apellido = dr["Apellido"].ToString(),
+                        Correo = dr["Correo"].ToString(),
+                        Telefono = dr["Telefono"].ToString(),
+
+                        EstadoAcademico = new EstadoAcademico()
+                        {
+                            Id = Convert.ToInt32(dr["IdEstadoAcademico"]),
+                            Nombre = dr["EstadoAcademico"].ToString()
+                        }
+                    });
+                }
+            }
+            return lista;
+        }
+
+        public bool MtRegistrarAprendizPlan(AprendizPlan asignacion)
+        {
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"INSERT INTO AprendizPlan
+                                    (
+                                        IdAprendiz,
+                                        IdPlanMejoramiento,
+                                        Estado,
+                                        Observacion,
+                                        FechaAsignacion
+                                    )
+                                    VALUES
+                                    (
+                                        @IdAprendiz,
+                                        @IdPlanMejoramiento,
+                                        @Estado,
+                                        @Observacion,
+                                        @FechaAsignacion
+                                    )";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@IdAprendiz", asignacion.Aprendiz);
+                cmd.Parameters.AddWithValue("@IdPlanMejoramiento", asignacion.PlanMejoramiento.Id);
+                cmd.Parameters.AddWithValue("@Estado", asignacion.Estado);
+                cmd.Parameters.AddWithValue("@Observacion", asignacion.Observacion);
+                cmd.Parameters.AddWithValue("@FechaAsignacion", asignacion.FechaAsignacion);
+
+                return cmd.ExecuteNonQuery() > 0;
+
+            }
+        }
+    }
+}
+</file>
+
+<file path="Datos/AprendizPlanD.cs">
+using PlanMejoramientoWeb.Modelo;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+namespace PlanMejoramientoWeb.Datos
+{
+    public class AprendizPlanD
+    {
+        public bool MtRegistrarAprendizPlan(AprendizPlan asignacion)
+        {
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"INSERT INTO AprendizPlan
+                                    (
+                                        IdAprendiz,
+                                        IdPlanMejoramiento,
+                                        Estado,
+                                        Observacion,
+                                        FechaAsignacion
+                                    )
+                                    VALUES
+                                    (
+                                        @IdAprendiz,
+                                        @IdPlanMejoramiento,
+                                        @Estado,
+                                        @Observacion,
+                                        @FechaAsignacion
+                                    )";
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@IdAprendiz", asignacion.Aprendiz.Id);
+                cmd.Parameters.AddWithValue("@IdPlanMejoramiento", asignacion.PlanMejoramiento.Id);
+                cmd.Parameters.AddWithValue("@Estado", asignacion.Estado);
+                cmd.Parameters.AddWithValue("@Observacion", asignacion.Observacion);
+                cmd.Parameters.AddWithValue("@FechaAsignacion", asignacion.FechaAsignacion);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }
 </file>
@@ -1252,9 +1405,9 @@ namespace PlanMejoramientoWeb.Datos
             }
         }
 
-        public List<FichaInstructor> MtListarFichaInstructor()
+        public List<Ficha> MtListarFichaInstructor(int idInstructor)
         {
-            List<FichaInstructor> lista = new List<FichaInstructor>();
+            List<Ficha> lista = new List<Ficha>();
 
             using (SqlConnection conn = ConexionDB.MtAbrirConexion())
             {
@@ -1262,45 +1415,40 @@ namespace PlanMejoramientoWeb.Datos
 
                 string consulta = @"
                     SELECT
-                        fi.Id,
-
-                        f.Id AS IdFicha,
-                        f.CodigoFicha,
-
-                        i.Id AS IdInstructor,
-                        i.Nombre,
-                        i.Apellido
-
+                        f.*,
+                        j.Id AS IdJornada,
+                        j.Nombre AS NombreJornada
                     FROM FichaInstructor fi
-
                     INNER JOIN Ficha f
                         ON fi.IdFicha = f.Id
-
-                    INNER JOIN Instructor i
-                        ON fi.IdInstructor = i.Id";
+                    INNER JOIN Jornada j
+                        ON f.IdJornada = j.Id
+                    WHERE fi.IdInstructor = @IdInstructor";
 
                 SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@IdInstructor", idInstructor);
 
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
                 {
-                    lista.Add(new FichaInstructor()
+                    lista.Add(new Ficha()
                     {
-                        Id = Convert.ToInt32(dr["Id"]),
 
-                        Ficha = new Ficha()
+                        Id = Convert.ToInt32(dr["Id"]),
+                        CodigoFicha = dr["CodigoFicha"].ToString(),
+                        FechaInicio = DateTime.Parse(dr["FechaInicio"].ToString()),
+                        FechaFinalizacion = DateTime.Parse(dr["FechaFinalizacion"].ToString()),
+
+                        Jornada = new Jornada()
                         {
-                            Id = Convert.ToInt32(dr["IdFicha"]),
-                            CodigoFicha = dr["CodigoFicha"].ToString()
+                            Id = Convert.ToInt32(dr["IdJornada"]),
+                            Nombre = dr["NombreJornada"].ToString()
                         },
 
-                        Instructor = new Instructor()
-                        {
-                            Id = Convert.ToInt32(dr["IdInstructor"]),
-                            Nombre = dr["Nombre"].ToString(),
-                            Apellido = dr["Apellido"].ToString()
-                        }
+                        Estado = dr["Estado"].ToString()
+
                     });
                 }
             }
@@ -1826,6 +1974,155 @@ namespace PlanMejoramientoWeb.Datos
 }
 </file>
 
+<file path="Datos/PlanMejoramientoD.cs">
+using PlanMejoramientoWeb.Modelo;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+namespace PlanMejoramientoWeb.Datos
+{
+    public class PlanMejoramientoD
+    {
+        public int MtRegistrarPlanMejoramiento(PlanMejoramiento plan)
+        {
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"
+                                    INSERT INTO PlanMejoramiento
+                                    (
+                                        Nombre,
+                                        FechaAsignacion,
+                                        FechaLimite,
+                                        IdInstructor,
+                                        IdTipoPlan
+                                    )
+                                    OUTPUT INSERTED.Id
+                                    VALUES
+                                    (
+                                        @Nombre,
+                                        @FechaAsignacion,
+                                        @FechaLimite,
+                                        @IdInstructor,
+                                        @IdTipoPlan
+                                    )";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@Nombre", plan.Nombre);
+                cmd.Parameters.AddWithValue("@FechaAsignacion", plan.FechaAsignacion);
+                cmd.Parameters.AddWithValue("@FechaLimite", plan.FechaLimite);
+                cmd.Parameters.AddWithValue("@IdInstructor", plan.Instructor.Id);
+                cmd.Parameters.AddWithValue("@IdTipoPlan", plan.TipoPlan.Id);
+
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        public List<PlanMejoramiento> MtListarPlanMejoramiento()
+        {
+            List<PlanMejoramiento> lista = new List<PlanMejoramiento>();
+
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"SELECT
+                                    p.*,
+
+                                    i.Nombre AS NombreInstructor,
+
+                                    tp.Nombre AS NombreTipoPlan
+
+                                FROM PlanMejoramiento p
+
+                                INNER JOIN Instructor i
+                                    ON p.IdInstructor = i.Id
+
+                                INNER JOIN TipoPlan tp
+                                    ON p.IdTipoPlan = tp.Id";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new PlanMejoramiento()
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        Nombre = dr["Nombre"].ToString(),
+                        FechaAsignacion = Convert.ToDateTime(dr["FechaAsignacion"]),
+                        FechaLimite = Convert.ToDateTime(dr["FechaLimite"]),
+
+                        Instructor = new Instructor()
+                        {
+                            Nombre =
+                                dr["NombreInstructor"]
+                                .ToString()
+                        },
+
+                        TipoPlan = new TipoPlan()
+                        {
+                            Nombre =
+                                dr["NombreTipoPlan"]
+                                .ToString()
+                        }
+                    });
+                }
+            }
+            return lista;
+        }
+
+        public PlanMejoramiento MtObtenerPlanMejoramientoId(int id)
+        {
+            PlanMejoramiento plan = null;
+
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"SELECT * FROM PlanMejoramiento WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    plan = new PlanMejoramiento()
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        Nombre = dr["Nombre"].ToString(),
+                        FechaAsignacion = Convert.ToDateTime(dr["FechaAsignacion"]),
+                        FechaLimite = Convert.ToDateTime(dr["FechaLimite"]),
+
+                        Instructor = new Instructor()
+                        {
+                            Id =
+                            Convert.ToInt32(
+                                dr["IdInstructor"])
+                        },
+
+                        TipoPlan = new TipoPlan()
+                        {
+                            Id =
+                            Convert.ToInt32(
+                                dr["IdTipoPlan"])
+                        }
+                    };
+
+                }
+            }
+            return plan; 
+        }
+    }
+}
+</file>
+
 <file path="Datos/ProgramaD.cs">
 using PlanMejoramientoWeb.Modelo;
 using System;
@@ -2035,6 +2332,33 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oAprendizD.MtEliminarAprendiz(id);
         }
+
+        public List<Aprendiz> MtListarAprendicesPorInstructor(int idInstructor)
+        {
+            return oAprendizD.MtListarAprendizPorInstructor(idInstructor);
+        }
+    }
+}
+</file>
+
+<file path="Logica/AprendizPlanL.cs">
+using PlanMejoramientoWeb.Datos;
+using PlanMejoramientoWeb.Modelo;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace PlanMejoramientoWeb.Logica
+{
+    public class AprendizPlanL
+    {
+        private AprendizPlanD oAprendizPlan = new AprendizPlanD();
+
+        public bool MtRegistrarAprendizPlan(AprendizPlan asignacion)
+        {
+            return oAprendizPlan.MtRegistrarAprendizPlan(asignacion);
+        }
     }
 }
 </file>
@@ -2111,20 +2435,17 @@ namespace PlanMejoramientoWeb.Logica
         public bool MtRegistrarFichaInstructor(
             FichaInstructor fichaInstructor)
         {
-            return oFichaInstructorD
-                .MtRegistrarFichaInstructor(fichaInstructor);
+            return oFichaInstructorD.MtRegistrarFichaInstructor(fichaInstructor);
         }
 
-        public List<FichaInstructor> MtListarFichaInstructor()
+        public List<Ficha> MtListarFichaInstructor(int idInstructor)
         {
-            return oFichaInstructorD
-                .MtListarFichaInstructor();
+            return oFichaInstructorD.MtListarFichaInstructor(idInstructor);
         }
 
         public bool MtEliminarFichaInstructor(int id)
         {
-            return oFichaInstructorD
-                .MtEliminarFichaInstructor(id);
+            return oFichaInstructorD.MtEliminarFichaInstructor(id);
         }
 
         public List<Ficha> MtListarFichaPorInstructor(int idInstructor)
@@ -2314,6 +2635,38 @@ namespace PlanMejoramientoWeb.Logica
 }
 </file>
 
+<file path="Logica/PlanMejoramientoL.cs">
+using PlanMejoramientoWeb.Datos;
+using PlanMejoramientoWeb.Modelo;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace PlanMejoramientoWeb.Logica
+{
+    public class PlanMejoramientoL
+    {
+        private PlanMejoramientoD oPlanMejoramiento = new PlanMejoramientoD();
+
+        public int MtRegistrarPlanMejoramiento(PlanMejoramiento plan)
+        {
+            return oPlanMejoramiento.MtRegistrarPlanMejoramiento(plan);
+        }
+
+        public List<PlanMejoramiento> MtListarPlanMejoramiento()
+        {
+            return oPlanMejoramiento.MtListarPlanMejoramiento();
+        }
+
+        public PlanMejoramiento MtObtenerPlanMejoramientoId(int id)
+        {
+            return oPlanMejoramiento.MtObtenerPlanMejoramientoId(id);
+        }
+    }
+}
+</file>
+
 <file path="Logica/ProgramaL.cs">
 using PlanMejoramientoWeb.Datos;
 using PlanMejoramientoWeb.Modelo;
@@ -2388,6 +2741,31 @@ namespace PlanMejoramientoWeb.Modelo
         public string Telefono { get; set; }
         public string Contrasena { get; set; }
         public EstadoAcademico EstadoAcademico { get; set; }
+    }
+}
+</file>
+
+<file path="Modelo/AprendizPlan.cs">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace PlanMejoramientoWeb.Modelo
+{
+    public class AprendizPlan
+    {
+        public int Id { get; set; }
+
+        public Aprendiz Aprendiz { get; set; }
+
+        public PlanMejoramiento PlanMejoramiento { get; set; }
+
+        public string Estado { get; set; }
+
+        public string Observacion { get; set; }
+
+        public DateTime FechaAsignacion { get; set; }
     }
 }
 </file>
@@ -2534,6 +2912,31 @@ namespace PlanMejoramientoWeb.Modelo
 }
 </file>
 
+<file path="Modelo/PlanMejoramiento.cs">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace PlanMejoramientoWeb.Modelo
+{
+    public class PlanMejoramiento
+    {
+        public int Id { get; set; }
+
+        public string Nombre { get; set; }
+
+        public DateTime FechaAsignacion { get; set; }
+
+        public DateTime FechaLimite { get; set; }
+
+        public Instructor Instructor { get; set; }
+
+        public TipoPlan TipoPlan { get; set; }
+    }
+}
+</file>
+
 <file path="Modelo/Programa.cs">
 using System;
 using System.Collections.Generic;
@@ -2551,6 +2954,22 @@ namespace PlanMejoramientoWeb.Modelo
         public int Duracion { get; set; }
         public string Estado { get; set; }
         public NivelFormacion NivelFormacion { get; set; }
+    }
+}
+</file>
+
+<file path="Modelo/TipoPlan.cs">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace PlanMejoramientoWeb.Modelo
+{
+    public class TipoPlan
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
     }
 }
 </file>
@@ -2657,12 +3076,15 @@ namespace PlanMejoramientoWeb.Modelo
     <Content Include="Vista\Administrador\Instructores.aspx" />
     <Content Include="Vista\Administrador\Programas.aspx" />
     <Content Include="Vista\Aprendiz\Inicio.aspx" />
+    <Content Include="Vista\Instructor\Aprendices.aspx" />
+    <Content Include="Vista\Instructor\GestionarPlan.aspx" />
     <Content Include="Vista\Instructor\Inicio.aspx" />
     <Content Include="Vista\Login.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Datos\AprendizD.cs" />
+    <Compile Include="Datos\AprendizPlanD.cs" />
     <Compile Include="Datos\ConexionDB.cs" />
     <Compile Include="Datos\EstadoAcademicoD.cs" />
     <Compile Include="Datos\FichaAprendizD.cs" />
@@ -2672,8 +3094,10 @@ namespace PlanMejoramientoWeb.Modelo
     <Compile Include="Datos\JornadaD.cs" />
     <Compile Include="Datos\LoginD.cs" />
     <Compile Include="Datos\NivelFormacionD.cs" />
+    <Compile Include="Datos\PlanMejoramientoD.cs" />
     <Compile Include="Datos\ProgramaD.cs" />
     <Compile Include="Logica\AprendizL.cs" />
+    <Compile Include="Logica\AprendizPlanL.cs" />
     <Compile Include="Logica\EstadoAcademicoL.cs" />
     <Compile Include="Logica\FichaAprendizL.cs" />
     <Compile Include="Logica\FichaInstructorL.cs" />
@@ -2682,8 +3106,10 @@ namespace PlanMejoramientoWeb.Modelo
     <Compile Include="Logica\JornadaL.cs" />
     <Compile Include="Logica\LoginL.cs" />
     <Compile Include="Logica\NivelFormacionL.cs" />
+    <Compile Include="Logica\PlanMejoramientoL.cs" />
     <Compile Include="Logica\ProgramaL.cs" />
     <Compile Include="Modelo\Aprendiz.cs" />
+    <Compile Include="Modelo\AprendizPlan.cs" />
     <Compile Include="Modelo\EstadoAcademico.cs" />
     <Compile Include="Modelo\Ficha.cs" />
     <Compile Include="Modelo\FichaAprendiz.cs" />
@@ -2691,7 +3117,9 @@ namespace PlanMejoramientoWeb.Modelo
     <Compile Include="Modelo\Instructor.cs" />
     <Compile Include="Modelo\Jornada.cs" />
     <Compile Include="Modelo\NivelFormacion.cs" />
+    <Compile Include="Modelo\PlanMejoramiento.cs" />
     <Compile Include="Modelo\Programa.cs" />
+    <Compile Include="Modelo\TipoPlan.cs" />
     <Compile Include="Modelo\UsuarioSesion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vista\Administrador\Aprendices.aspx.cs">
@@ -2735,6 +3163,20 @@ namespace PlanMejoramientoWeb.Modelo
     </Compile>
     <Compile Include="Vista\Aprendiz\Inicio.aspx.designer.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\Instructor\Aprendices.aspx.cs">
+      <DependentUpon>Aprendices.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Vista\Instructor\Aprendices.aspx.designer.cs">
+      <DependentUpon>Aprendices.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\Instructor\GestionarPlan.aspx.cs">
+      <DependentUpon>GestionarPlan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Vista\Instructor\GestionarPlan.aspx.designer.cs">
+      <DependentUpon>GestionarPlan.aspx</DependentUpon>
     </Compile>
     <Compile Include="Vista\Instructor\Inicio.aspx.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>
@@ -3408,7 +3850,9 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                 MtCargarFichasAsignar();
 
                 btnActualizar.Visible = false;
+
             }
+            ddlEstadoAcademico.Visible = false;
         }
 
         public void MtCargarEstadoAcademico()
@@ -3473,8 +3917,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
                 EstadoAcademico = new EstadoAcademico()
                 {
-                    Id = Convert.ToInt32(
-                        ddlEstadoAcademico.SelectedValue)
+                    Id = 1
                 }
 
             };
@@ -3510,8 +3953,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
                 EstadoAcademico = new EstadoAcademico()
                 {
-                    Id = Convert.ToInt32(
-                        ddlEstadoAcademico.SelectedValue)
+                    Id = Convert.ToInt32(ddlEstadoAcademico.SelectedValue)
                 }
             };
 
@@ -3559,6 +4001,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
                 btnGuardar.Visible = false;
                 btnActualizar.Visible = true;
+                ddlEstadoAcademico.Visible = true;
             }
         }
 
@@ -6650,15 +7093,67 @@ namespace PlanMejoramientoWeb.Vista.Aprendiz
 }
 </file>
 
-<file path="Vista/Instructor/Inicio.aspx">
-<%@ Page Title="" Language="C#" MasterPageFile="~/Vista/Site1.Master" AutoEventWireup="true" CodeBehind="Inicio.aspx.cs" Inherits="PlanMejoramientoWeb.Vista.Instructor.Inicio" %>
+<file path="Vista/Instructor/Aprendices.aspx">
+<%@ Page Title="" Language="C#" MasterPageFile="~/Vista/Site1.Master" AutoEventWireup="true" CodeBehind="Aprendices.aspx.cs" Inherits="PlanMejoramientoWeb.Vista.Instructor.Aprendices" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <h2>Mis Aprendices</h2>
+
+    <asp:GridView
+        ID="gvAprendices"
+        runat="server"
+        AutoGenerateColumns="False"
+        CssClass="table table-bordered">
+
+        <Columns>
+
+            <asp:BoundField
+                DataField="NumeroDocumento"
+                HeaderText="Documento" />
+
+            <asp:BoundField
+                DataField="Nombre"
+                HeaderText="Nombre" />
+
+            <asp:BoundField
+                DataField="Apellido"
+                HeaderText="Apellido" />
+
+            <asp:BoundField
+                DataField="Correo"
+                HeaderText="Correo" />
+
+            <asp:TemplateField HeaderText="Estado Académico">
+                <ItemTemplate>
+                    <%# Eval("EstadoAcademico.Nombre") %>
+                </ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField HeaderText="Acciones">
+                <ItemTemplate>
+
+                    <asp:LinkButton
+                        ID="btnVerPlanes"
+                        runat="server"
+                        Text="Planes"
+                        CssClass="btn btn-primary btn-sm"
+                        CommandArgument='<%# Eval("Id") %>'>
+                </asp:LinkButton>
+
+                </ItemTemplate>
+            </asp:TemplateField>
+
+        </Columns>
+
+    </asp:GridView>
 </asp:Content>
 </file>
 
-<file path="Vista/Instructor/Inicio.aspx.cs">
+<file path="Vista/Instructor/Aprendices.aspx.cs">
+using PlanMejoramientoWeb.Logica;
+using PlanMejoramientoWeb.Modelo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6668,7 +7163,73 @@ using System.Web.UI.WebControls;
 
 namespace PlanMejoramientoWeb.Vista.Instructor
 {
-    public partial class Inicio : System.Web.UI.Page
+    public partial class Aprendices : System.Web.UI.Page
+    {
+        private AprendizL oAprendiz = new AprendizL();
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            MtCargarAprendices();
+        }
+        public void MtCargarAprendices()
+        {
+            UsuarioSesion usuario = Session["Usuario"] as UsuarioSesion;
+
+            gvAprendices.DataSource = oAprendiz.MtListarAprendicesPorInstructor(usuario.Id);
+
+            gvAprendices.DataBind();
+        }
+    }
+}
+</file>
+
+<file path="Vista/Instructor/Aprendices.aspx.designer.cs">
+//------------------------------------------------------------------------------
+// <generado automáticamente>
+//     Este código fue generado por una herramienta.
+//
+//     Los cambios en este archivo podrían causar un comportamiento incorrecto y se perderán si
+//     se vuelve a generar el código. 
+// </generado automáticamente>
+//------------------------------------------------------------------------------
+
+namespace PlanMejoramientoWeb.Vista.Instructor
+{
+
+
+    public partial class Aprendices
+    {
+
+        /// <summary>
+        /// Control gvAprendices.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvAprendices;
+    }
+}
+</file>
+
+<file path="Vista/Instructor/GestionarPlan.aspx">
+<%@ Page Title="" Language="C#" MasterPageFile="~/Vista/Site1.Master" AutoEventWireup="true" CodeBehind="GestionarPlan.aspx.cs" Inherits="PlanMejoramientoWeb.Vista.Instructor.GestionarPlan" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+</asp:Content>
+</file>
+
+<file path="Vista/Instructor/GestionarPlan.aspx.cs">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace PlanMejoramientoWeb.Vista.Instructor
+{
+    public partial class GestionarPlan : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -6678,7 +7239,7 @@ namespace PlanMejoramientoWeb.Vista.Instructor
 }
 </file>
 
-<file path="Vista/Instructor/Inicio.aspx.designer.cs">
+<file path="Vista/Instructor/GestionarPlan.aspx.designer.cs">
 //------------------------------------------------------------------------------
 // <auto-generated>
 //     Este código fue generado por herramienta.
@@ -6692,8 +7253,114 @@ namespace PlanMejoramientoWeb.Vista.Instructor
 {
 
 
+    public partial class GestionarPlan
+    {
+    }
+}
+</file>
+
+<file path="Vista/Instructor/Inicio.aspx">
+<%@ Page Title="" Language="C#" MasterPageFile="~/Vista/Site1.Master" AutoEventWireup="true" CodeBehind="Inicio.aspx.cs" Inherits="PlanMejoramientoWeb.Vista.Instructor.Inicio" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <h2>Mis Fichas</h2>
+
+    <asp:GridView
+        ID="gvFichas"
+        runat="server"
+        AutoGenerateColumns="False"
+        CssClass="table table-bordered">
+
+        <Columns>
+
+            <asp:BoundField
+                DataField="CodigoFicha"
+                HeaderText="Código" />
+
+            <asp:BoundField
+                DataField="FechaInicio"
+                HeaderText="Fecha Inicio" />
+
+            <asp:BoundField
+                DataField="FechaFinalizacion"
+                HeaderText="Fecha Finalizacion" />
+
+            <asp:TemplateField HeaderText="Jornada">
+                <ItemTemplate>
+                    <%# Eval("Jornada.Nombre") %>
+                </ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:BoundField
+                DataField="Estado"
+                HeaderText="Estado" />
+        </Columns>
+
+    </asp:GridView>
+</asp:Content>
+</file>
+
+<file path="Vista/Instructor/Inicio.aspx.cs">
+using PlanMejoramientoWeb.Logica;
+using PlanMejoramientoWeb.Modelo;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace PlanMejoramientoWeb.Vista.Instructor
+{
+    public partial class Inicio : System.Web.UI.Page
+    {
+        private FichaInstructorL oFichaInstructor = new FichaInstructorL();
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                MtCargarFichas();
+            }
+        } 
+
+        public void MtCargarFichas()
+        {
+            UsuarioSesion usuario = Session["Usuario"] as UsuarioSesion;
+
+            gvFichas.DataSource = oFichaInstructor.MtListarFichaInstructor(usuario.Id);
+            gvFichas.DataBind();
+        }
+    }
+}
+</file>
+
+<file path="Vista/Instructor/Inicio.aspx.designer.cs">
+//------------------------------------------------------------------------------
+// <generado automáticamente>
+//     Este código fue generado por una herramienta.
+//
+//     Los cambios en este archivo podrían causar un comportamiento incorrecto y se perderán si
+//     se vuelve a generar el código. 
+// </generado automáticamente>
+//------------------------------------------------------------------------------
+
+namespace PlanMejoramientoWeb.Vista.Instructor
+{
+
+
     public partial class Inicio
     {
+
+        /// <summary>
+        /// Control gvFichas.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvFichas;
     }
 }
 </file>
@@ -7354,17 +8021,19 @@ namespace PlanMejoramientoWeb.Vista
             <%-- Menú Instructor --%>
             <asp:Panel ID="pnlInstructor" runat="server" CssClass="sb-section">
                 <span class="sb-section-label">Instructor</span>
-                <a href="/Instructor/Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
-                <a href="/Instructor/Planes.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Planes</a>
-                <a href="/Instructor/Evaluaciones.aspx" class="sb-link"><i class="ti ti-checklist"></i>Evaluaciones</a>
+                <a href="Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
+                <a href="Planes.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Planes</a>
+                <a href="Evaluaciones.aspx" class="sb-link"><i class="ti ti-checklist"></i>Evaluaciones</a>
+                <a href="Aprendices.aspx" class="sb-link"><i class="ti ti-school"></i>Aprendices</a>
+
             </asp:Panel>
 
             <%-- Menú Aprendiz --%>
             <asp:Panel ID="pnlAprendiz" runat="server" CssClass="sb-section">
                 <span class="sb-section-label">Aprendiz</span>
-                <a href="/Aprendiz/Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
-                <a href="/Aprendiz/MisPlanes.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Mis Planes</a>
-                <a href="/Aprendiz/Evidencias.aspx" class="sb-link"><i class="ti ti-file-upload"></i>Evidencias</a>
+                <a href="Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
+                <a href="MisPlanes.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Mis Planes</a>
+                <a href="Evidencias.aspx" class="sb-link"><i class="ti ti-file-upload"></i>Evidencias</a>
             </asp:Panel>
 
             <div class="sb-bottom">
@@ -7602,7 +8271,7 @@ namespace PlanMejoramientoWeb.Vista
 	</system.codedom>
 	<connectionStrings>
 		<add name="ConexionDB"
-			 connectionString="Data Source=DESKTOP-F56NHCL\SQLEXPRESS;Initial Catalog=dbSoftwareMejoramiento;Integrated Security=True;TrustServerCertificate=True"
+			 connectionString="Data Source=DESKTOP-1D0O1GU\SQLEXPRESS;Initial Catalog=dbSoftwareMejoramiento;Integrated Security=True;TrustServerCertificate=True"
 			 providerName="System.Data.SqlClient"/>
 	</connectionStrings>
 </configuration>

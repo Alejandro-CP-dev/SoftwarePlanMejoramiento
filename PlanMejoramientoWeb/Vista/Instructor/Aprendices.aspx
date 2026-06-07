@@ -41,10 +41,11 @@
                     <asp:LinkButton
                         ID="btnVerPlanes"
                         runat="server"
-                        Text="Planes"
+                        Text="Gestionar Plan"
                         CssClass="btn btn-primary btn-sm"
-                        CommandArgument='<%# Eval("Id") %>'>
-                </asp:LinkButton>
+                        CommandArgument='<%# Eval("Id") %>'
+                        OnClick="btnVerPlanes_Click">
+                    </asp:LinkButton>
 
                 </ItemTemplate>
             </asp:TemplateField>
