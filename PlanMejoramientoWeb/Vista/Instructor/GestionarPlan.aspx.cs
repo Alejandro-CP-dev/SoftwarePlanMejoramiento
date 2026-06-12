@@ -52,7 +52,7 @@ namespace PlanMejoramientoWeb.Vista.Instructor
             if (aprendiz.EstadoAcademico != null)
             {
                 lblEstadoAcademico.Text = aprendiz.EstadoAcademico.Nombre;
-                lblEstadoAcademico.CssClass = "badge-estado " + aprendiz.EstadoAcademico.CssBadge;
+                lblEstadoAcademico.CssClass = "badge-estado " + aprendiz.EstadoAcademico;
             }
             else
             {

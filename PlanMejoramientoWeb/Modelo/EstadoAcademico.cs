@@ -12,19 +12,6 @@ namespace PlanMejoramientoWeb.Modelo
         public string Nombre { get; set; }
 
         public string Descripcion { get; set; }
-        public string CssBadge
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(Nombre)) return "badge-otro";
-
-                string nombre = Nombre.Trim().ToLowerInvariant();
-
-                if (nombre == "cancelado") return "badge-cancelado";
-                if (nombre == "activo" || nombre == "en formación" || nombre == "en formacion") return "badge-activo";
-
-                return "badge-otro";
-            }
-        }
+        
     }
 }

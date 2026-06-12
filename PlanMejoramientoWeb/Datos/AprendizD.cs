@@ -111,9 +111,7 @@ namespace PlanMejoramientoWeb.Datos
 
                 SqlCommand cmd = new SqlCommand(consulta, conn);
 
-                cmd.Parameters.AddWithValue(
-                    "@NumeroDocumento",
-                    numeroDocumento);
+                cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
 
                 return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
             }
