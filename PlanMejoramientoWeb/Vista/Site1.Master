@@ -275,6 +275,12 @@
                 <a href="Instructores.aspx" class="sb-link"><i class="ti ti-users"></i>Instructores</a>
                 <a href="Aprendices.aspx" class="sb-link"><i class="ti ti-school"></i>Aprendices</a>
             </asp:Panel>
+            <%-- Menú Gestor --%>
+            <asp:Panel ID="pnlGestor" runat="server" CssClass="sb-section">
+                <span class="sb-section-label">Gestor</span>
+                <a href="Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
+                <a href="Instructores.aspx" class="sb-link"><i class="ti ti-users"></i>PlanesMejoramiento</a>
+            </asp:Panel>
 
             <%-- Menú Instructor --%>
             <asp:Panel ID="pnlInstructor" runat="server" CssClass="sb-section">

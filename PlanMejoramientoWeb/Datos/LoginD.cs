@@ -49,6 +49,40 @@ namespace PlanMejoramientoWeb.Datos
                     return usuario;
                 }
 
+                // Sesion Como Gestor 
+
+                string consultaGestor = @"
+                                        SELECT *
+                                        FROM Gestor
+                                        WHERE Correo=@Correo
+                                        AND Contrasena=@Contrasena";
+                SqlCommand cmdGestor = new SqlCommand(consultaGestor, conn);
+
+                cmdGestor.Parameters.AddWithValue("@Correo", correo);
+                cmdGestor.Parameters.AddWithValue("@Contrasena", clave);
+
+                SqlDataReader drGestor = cmdGestor.ExecuteReader();
+
+                if (drGestor.Read())
+                {
+                    usuario = new UsuarioSesion()
+                    {
+                        Id = Convert.ToInt32(drGestor["Id"]),
+                        Nombre = drGestor["Nombre"].ToString(),
+                        Apellido = drGestor["Apellido"].ToString(),
+                        Correo = drGestor["Correo"].ToString(),
+
+                        Rol = "Gestor"
+                    };
+                }
+                drGestor.Close();
+
+                if (usuario != null)
+                {
+                    return usuario;
+                }
+
+
                 // Sesion Como Instructor
                 string consultaInstructor = @"
                                         SELECT *

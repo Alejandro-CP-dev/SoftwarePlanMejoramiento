@@ -31,6 +31,9 @@ namespace PlanMejoramientoWeb.Vista
                     case "Administrador":
                         Response.Redirect("Administrador/Inicio.aspx");
                         break;
+                    case "Gestor":
+                        Response.Redirect("Gestores/Inicio.aspx");
+                        break;
 
                     case "Instructor":
                         Response.Redirect("Instructor/Inicio.aspx");

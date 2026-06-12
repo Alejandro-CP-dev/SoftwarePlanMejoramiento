@@ -31,11 +31,15 @@ namespace PlanMejoramientoWeb.Vista
             pnlAdministrador.Visible = false;
             pnlInstructor.Visible = false;
             pnlAprendiz.Visible = false;
+            pnlGestor.Visible = false;
 
             switch (usuario.Rol)
             {
                 case "Administrador":
                     pnlAdministrador.Visible = true;
+                    break;
+                case "Gestor":
+                    pnlGestor.Visible = true;
                     break;
                 case "Instructor":
                     pnlInstructor.Visible = true;
