@@ -180,6 +180,43 @@ namespace PlanMejoramientoWeb.Datos
             }
         }
 
+        public Ficha MtObtenerFichaPorCodigo(string codigo)
+        {
+            Ficha ficha = null;
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+                string consulta = @"
+                    SELECT *
+                    FROM Ficha
+                    WHERE CodigoFicha=@CodigoFicha";
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+                cmd.Parameters.AddWithValue("@CodigoFicha", codigo);
+                SqlDataReader dr = cmd.ExecuteReader();
+                if (dr.Read())
+                {
+                    ficha = new Ficha()
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        CodigoFicha = dr["CodigoFicha"].ToString(),
+                        FechaInicio = Convert.ToDateTime(dr["FechaInicio"]),
+                        FechaFinalizacion = Convert.ToDateTime(dr["FechaFinalizacion"]),
+                        Descripcion = dr["Descripcion"].ToString(),
+                        Estado = dr["Estado"].ToString(),
+                        Programa = new Programa()
+                        {
+                            Id = Convert.ToInt32(dr["IdPrograma"])
+                        },
+                        Jornada = new Jornada()
+                        {
+                            Id = Convert.ToInt32(dr["IdJornada"])
+                        }
+                    };
+                }
+            }
+            return ficha;
+        }
+
         public bool MtEliminarFicha(int id)
         {
             using (SqlConnection conn = ConexionDB.MtAbrirConexion())

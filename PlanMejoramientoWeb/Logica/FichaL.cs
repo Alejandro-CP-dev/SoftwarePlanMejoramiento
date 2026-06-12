@@ -35,5 +35,10 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oFichaD.MtEliminarFicha(id);
         }
+
+        public Ficha MtObtenerFichaPorCodigo(string codigo)
+        {
+            return oFichaD.MtObtenerFichaPorCodigo(codigo);
+        }
     }
 }

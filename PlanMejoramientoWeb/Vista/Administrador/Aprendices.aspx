@@ -460,7 +460,30 @@
             <asp:Button ID="btnLimpiar" runat="server" Text="✕ Limpiar" CssClass="btn-limpiar" OnClick="btnLimpiar_Click" />
         </div>
     </div>
+    <h4>Carga Masiva de Aprendices</h4>
 
+    <asp:FileUpload
+        ID="fuExcel"
+        runat="server"
+        CssClass="form-control" />
+
+    <br />
+
+    <asp:Button
+        ID="btnCargarExcel"
+        runat="server"
+        Text="Cargar Excel"
+        CssClass="btn btn-success"
+        OnClick="btnCargarExcel_Click" />
+
+    <br />
+    <br />
+
+    <asp:Label
+        ID="lblResultadoCarga"
+        runat="server"
+        ForeColor="Green">
+    </asp:Label>
     <%-- Tabla --%>
     <div class="card">
         <div class="card-title">Aprendices registrados</div>

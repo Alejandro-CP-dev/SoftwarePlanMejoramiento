@@ -1,8 +1,10 @@
-﻿using PlanMejoramientoWeb.Datos;
+﻿using ClosedXML.Excel;
+using PlanMejoramientoWeb.Datos;
 using PlanMejoramientoWeb.Logica;
 using PlanMejoramientoWeb.Modelo;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -296,6 +298,151 @@ namespace PlanMejoramientoWeb.Vista.Administrador
             document.getElementById('modalVerFichas')
           );
           modal.show();",
+                true);
+        }
+
+        protected void btnCargarExcel_Click(object sender, EventArgs e)
+        {
+            if (!fuExcel.HasFile)
+            {
+                ClientScript.RegisterStartupScript(
+                    this.GetType(),
+                    "mensaje",
+                    "alert('Seleccione un archivo Excel');",
+                    true);
+
+                return;
+            }
+
+            string extension = Path.GetExtension(fuExcel.FileName).ToLower();
+
+            if (extension != ".xlsx")
+            {
+                ClientScript.RegisterStartupScript(
+                    this.GetType(),
+                    "mensaje",
+                    "alert('Solo se permiten archivos .xlsx');",
+                    true);
+
+                return;
+            }
+
+            int registrados = 0;
+            int errores = 0;
+
+            using (XLWorkbook libro = new XLWorkbook(fuExcel.FileContent))
+            {
+                IXLWorksheet hoja = libro.Worksheet(1);
+
+                int ultimaFila = hoja.LastRowUsed().RowNumber();
+
+                for (int fila = 2; fila <= ultimaFila; fila++)
+                {
+                    try
+                    {
+                        string tipoDocumento = hoja.Cell(fila, 1).GetString().Trim();
+                        string numeroDocumento = hoja.Cell(fila, 2).GetString().Trim();
+                        string nombre = hoja.Cell(fila, 3).GetString().Trim();
+                        string apellido = hoja.Cell(fila, 4).GetString().Trim();
+                        string correo = hoja.Cell(fila, 5).GetString().Trim();
+                        string telefono = hoja.Cell(fila, 6).GetString().Trim();
+                        string codigoFicha = hoja.Cell(fila, 7).GetString().Trim();
+
+                        // Validar datos obligatorios
+                        if (string.IsNullOrWhiteSpace(numeroDocumento) ||
+                            string.IsNullOrWhiteSpace(nombre) ||
+                            string.IsNullOrWhiteSpace(codigoFicha))
+                        {
+                            errores++;
+                            continue;
+                        }
+
+                        // Validar documento repetido
+                        if (oAprendiz.MtExisteDocumento(numeroDocumento))
+                        {
+                            errores++;
+                            continue;
+                        }
+
+                        // Buscar ficha
+                        Modelo.Ficha ficha = oFicha.MtObtenerFichaPorCodigo(codigoFicha);
+
+                        if (ficha == null)
+                        {
+                            errores++;
+                            continue;
+                        }
+
+                        Modelo.Aprendiz aprendiz = new Modelo.Aprendiz()
+                        {
+                            TipoDocumento = tipoDocumento,
+                            NumeroDocumento = numeroDocumento,
+                            Nombre = nombre,
+                            Apellido = apellido,
+                            Correo = correo,
+                            Telefono = telefono,
+                            Contrasena = numeroDocumento,
+
+                            EstadoAcademico = new EstadoAcademico()
+                            {
+                                Id = 1
+                            }
+                        };
+
+                        int idAprendiz =
+                            oAprendiz.MtRegistrarAprendizRetornandoId(aprendiz);
+
+                        if (idAprendiz > 0)
+                        {
+                            FichaAprendiz fichaAprendiz = new FichaAprendiz()
+                            {
+                                Aprendiz = new Modelo.Aprendiz()
+                                {
+                                    Id = idAprendiz
+                                },
+
+                                Ficha = new Modelo.Ficha()
+                                {
+                                    Id = ficha.Id
+                                }
+                            };
+
+                            bool asignado =
+                                oFichaAprendiz.MtRegistrarFichaAprendiz(fichaAprendiz);
+
+                            if (asignado)
+                            {
+                                registrados++;
+                            }
+                            else
+                            {
+                                errores++;
+                            }
+                        }
+                        else
+                        {
+                            errores++;
+                        }
+                    }
+                    catch
+                    {
+                        errores++;
+                    }
+                }
+            }
+
+            MtCargarAprendices();
+
+            lblResultadoCarga.Text =
+                "Carga finalizada. Registrados: " +
+                registrados +
+                " | Errores: " +
+                errores;
+
+            ClientScript.RegisterStartupScript(
+                this.GetType(),
+                "mensaje",
+                "alert('Proceso de carga masiva finalizado');",
                 true);
         }
     }

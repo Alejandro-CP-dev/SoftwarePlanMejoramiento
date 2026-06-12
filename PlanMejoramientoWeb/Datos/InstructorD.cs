@@ -158,7 +158,7 @@ namespace PlanMejoramientoWeb.Datos
             {
                 conn.Open();
 
-                string consulta = "DELETE FROM Instructor WHERE Id = @Id";
+                string consulta = "BEGIN TRANSACTION DELETE FROM FichaInstructor WHERE IdInstructor=@Id DELETE FROM Instructor WHERE Id=@Id COMMIT";
 
                 SqlCommand cmd = new SqlCommand(consulta, conn);
 

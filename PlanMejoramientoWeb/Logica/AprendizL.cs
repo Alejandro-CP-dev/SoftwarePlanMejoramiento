@@ -40,5 +40,15 @@ namespace PlanMejoramientoWeb.Logica
         {
             return oAprendizD.MtListarAprendizPorInstructor(idInstructor);
         }
+
+        public int MtRegistrarAprendizRetornandoId(Aprendiz aprendiz)
+        {
+            return oAprendizD.MtRegistrarAprendizRetornandoId(aprendiz);
+        }
+
+        public bool MtExisteDocumento(string numeroDocumento)
+        {
+            return oAprendizD.MtExisteDocumento(numeroDocumento);
+        }
     }
 }

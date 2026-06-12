@@ -53,6 +53,72 @@ namespace PlanMejoramientoWeb.Datos
             }
         }
 
+        public int MtRegistrarAprendizRetornandoId(Aprendiz aprendiz)
+        {
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"
+            INSERT INTO Aprendiz
+            (
+                TipoDocumento,
+                NumeroDocumento,
+                Nombre,
+                Apellido,
+                Correo,
+                Telefono,
+                Contrasena,
+                IdEstadoAcademico
+            )
+            OUTPUT INSERTED.Id
+            VALUES
+            (
+                @TipoDocumento,
+                @NumeroDocumento,
+                @Nombre,
+                @Apellido,
+                @Correo,
+                @Telefono,
+                @Contrasena,
+                @IdEstadoAcademico
+            )";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue("@TipoDocumento", aprendiz.TipoDocumento);
+                cmd.Parameters.AddWithValue("@NumeroDocumento", aprendiz.NumeroDocumento);
+                cmd.Parameters.AddWithValue("@Nombre", aprendiz.Nombre);
+                cmd.Parameters.AddWithValue("@Apellido", aprendiz.Apellido);
+                cmd.Parameters.AddWithValue("@Correo", aprendiz.Correo);
+                cmd.Parameters.AddWithValue("@Telefono", aprendiz.Telefono);
+                cmd.Parameters.AddWithValue("@Contrasena", aprendiz.Contrasena);
+                cmd.Parameters.AddWithValue("@IdEstadoAcademico", aprendiz.EstadoAcademico.Id);
+
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        public bool MtExisteDocumento(string numeroDocumento)
+        {
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = @"SELECT COUNT(*) 
+                            FROM Aprendiz
+                            WHERE NumeroDocumento=@NumeroDocumento";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+
+                cmd.Parameters.AddWithValue(
+                    "@NumeroDocumento",
+                    numeroDocumento);
+
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
         public List<Aprendiz> MtListarAprendiz()
         {
             List<Aprendiz> lista = new List<Aprendiz>();
@@ -186,7 +252,7 @@ namespace PlanMejoramientoWeb.Datos
             {
                 conn.Open();
 
-                string consulta = "DELETE FROM Aprendiz WHERE Id = @Id";
+                string consulta = "BEGIN TRANSACTION DELETE FROM FichaAprendiz WHERE IdAprendiz=@Id DELETE FROM Aprendiz WHERE Id=@Id COMMIT";
 
                 SqlCommand cmd = new SqlCommand(consulta, conn);
 
