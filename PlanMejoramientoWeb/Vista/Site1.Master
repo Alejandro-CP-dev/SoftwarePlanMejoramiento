@@ -280,8 +280,9 @@
             <asp:Panel ID="pnlInstructor" runat="server" CssClass="sb-section">
                 <span class="sb-section-label">Instructor</span>
                 <a href="Inicio.aspx" class="sb-link"><i class="ti ti-home"></i>Inicio</a>
-                <a href="GestionarPlan.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Planes</a>
-                <a href="Evaluaciones.aspx" class="sb-link"><i class="ti ti-checklist"></i>Evaluaciones</a>
+                <a href="CrearPlan.aspx" class="sb-link"><i class="ti ti-clipboard-list"></i>Crear Plan</a>
+                <a href="EditarPlan.aspx" class="sb-link"><i class="ti ti-edit"></i>Editar Plan</a>
+                <a href="EvaluarPlan.aspx" class="sb-link"><i class="ti ti-clipboard-check"></i>Evaluar Plan</a>
                 <a href="Aprendices.aspx" class="sb-link"><i class="ti ti-school"></i>Aprendices</a>
 
             </asp:Panel>

@@ -1,9 +1,6 @@
 ﻿using PlanMejoramientoWeb.Datos;
 using PlanMejoramientoWeb.Modelo;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace PlanMejoramientoWeb.Logica
 {
@@ -16,14 +13,14 @@ namespace PlanMejoramientoWeb.Logica
             return oAprendizPlan.MtRegistrarAprendizPlan(asignacion);
         }
 
-        public PlanMejoramiento MtObtenerPlanActivo(int idAprendiz)
-        {
-            return oAprendizPlan.MtObtenerPlanActivo(idAprendiz);
-        }
-
         public List<AprendizPlan> MtListarPlanesPorInstructor(int idInstructor)
         {
             return oAprendizPlan.MtListarPlanesPorInstructor(idInstructor);
+        }
+
+        public List<AprendizPlan> MtListarPlanesPorAprendiz(int idAprendiz)
+        {
+            return oAprendizPlan.MtListarPlanesPorAprendiz(idAprendiz);
         }
     }
 }

@@ -74,6 +74,9 @@
     <Content Include="Vista\Administrador\Programas.aspx" />
     <Content Include="Vista\Aprendiz\Inicio.aspx" />
     <Content Include="Vista\Instructor\Aprendices.aspx" />
+    <Content Include="Vista\Instructor\CrearPlan.aspx" />
+    <Content Include="Vista\Instructor\EditarPlan.aspx" />
+    <Content Include="Vista\Instructor\EvaluarPlan.aspx" />
     <Content Include="Vista\Instructor\GestionarPlan.aspx" />
     <Content Include="Vista\Instructor\Inicio.aspx" />
     <Content Include="Vista\Login.aspx" />
@@ -84,6 +87,7 @@
     <Compile Include="Datos\AprendizPlanD.cs" />
     <Compile Include="Datos\ConexionDB.cs" />
     <Compile Include="Datos\EstadoAcademicoD.cs" />
+    <Compile Include="Datos\EvaluacionPlanD.cs" />
     <Compile Include="Datos\FichaAprendizD.cs" />
     <Compile Include="Datos\FichaD.cs" />
     <Compile Include="Datos\FichaInstructorD.cs" />
@@ -96,6 +100,7 @@
     <Compile Include="Logica\AprendizL.cs" />
     <Compile Include="Logica\AprendizPlanL.cs" />
     <Compile Include="Logica\EstadoAcademicoL.cs" />
+    <Compile Include="Logica\EvaluacionPlanL.cs" />
     <Compile Include="Logica\FichaAprendizL.cs" />
     <Compile Include="Logica\FichaInstructorL.cs" />
     <Compile Include="Logica\FichaL.cs" />
@@ -108,6 +113,7 @@
     <Compile Include="Modelo\Aprendiz.cs" />
     <Compile Include="Modelo\AprendizPlan.cs" />
     <Compile Include="Modelo\EstadoAcademico.cs" />
+    <Compile Include="Modelo\EvaluacionPlan.cs" />
     <Compile Include="Modelo\Ficha.cs" />
     <Compile Include="Modelo\FichaAprendiz.cs" />
     <Compile Include="Modelo\FichaInstructor.cs" />
@@ -116,6 +122,7 @@
     <Compile Include="Modelo\NivelFormacion.cs" />
     <Compile Include="Modelo\PlanMejoramiento.cs" />
     <Compile Include="Modelo\Programa.cs" />
+    <Compile Include="Modelo\ResultadoEvaluacion.cs" />
     <Compile Include="Modelo\TipoPlan.cs" />
     <Compile Include="Modelo\UsuarioSesion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -167,6 +174,27 @@
     </Compile>
     <Compile Include="Vista\Instructor\Aprendices.aspx.designer.cs">
       <DependentUpon>Aprendices.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\Instructor\CrearPlan.aspx.cs">
+      <DependentUpon>CrearPlan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Vista\Instructor\CrearPlan.aspx.designer.cs">
+      <DependentUpon>CrearPlan.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\Instructor\EditarPlan.aspx.cs">
+      <DependentUpon>EditarPlan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Vista\Instructor\EditarPlan.aspx.designer.cs">
+      <DependentUpon>EditarPlan.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\Instructor\EvaluarPlan.aspx.cs">
+      <DependentUpon>EvaluarPlan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Vista\Instructor\EvaluarPlan.aspx.designer.cs">
+      <DependentUpon>EvaluarPlan.aspx</DependentUpon>
     </Compile>
     <Compile Include="Vista\Instructor\GestionarPlan.aspx.cs">
       <DependentUpon>GestionarPlan.aspx</DependentUpon>

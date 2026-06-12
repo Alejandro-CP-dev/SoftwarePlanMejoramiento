@@ -1,160 +1,92 @@
 ﻿using PlanMejoramientoWeb.Logica;
 using PlanMejoramientoWeb.Modelo;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace PlanMejoramientoWeb.Vista.Instructor
 {
     public partial class GestionarPlan : System.Web.UI.Page
     {
-        private AprendizL oAprendiz = new AprendizL();
-        private PlanMejoramientoL oPlan = new PlanMejoramientoL();
-        private AprendizPlanL oAprendizPlan = new AprendizPlanL();
-        private FichaAprendizL oFichaAprendiz = new FichaAprendizL();
+        private readonly AprendizL oAprendizL = new AprendizL();
+        private readonly AprendizPlanL oAprendizPlanL = new AprendizPlanL();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
-            {
-                if (Request.QueryString["idAprendiz"] != null)
-                {
-                    int idAprendiz =
-                        Convert.ToInt32(Request.QueryString["idAprendiz"]);
-
-                    hfIdAprendiz.Value = idAprendiz.ToString();
-
-                    MtCargarAprendiz(idAprendiz);
-
-                    MtCargarFicha(idAprendiz);
-
-                    MtCargarPlan(idAprendiz);
-                }
-            }
+                MtCargarDatos();
         }
 
-        public void MtCargarAprendiz(int idAprendiz)
+        private int MtObtenerIdAprendiz()
         {
-            Modelo.Aprendiz aprendiz = oAprendiz.MtObtenerAprendizPorId(idAprendiz);
-
-            if (aprendiz != null)
+            int idAprendiz;
+            if (!int.TryParse(Request.QueryString["idAprendiz"], out idAprendiz))
             {
-                txtDocumento.Text = aprendiz.NumeroDocumento;
-
-                txtNombre.Text = aprendiz.Nombre + " " + aprendiz.Apellido;
-
-                txtEstado.Text = aprendiz.EstadoAcademico.Nombre;
+                Response.Redirect("Aprendices.aspx");
             }
+            return idAprendiz;
         }
 
-        public void MtCargarFicha(int idAprendiz)
+        private void MtCargarDatos()
         {
-            var lista =
-                oFichaAprendiz.MtListarFichaPorAprendiz(idAprendiz);
+            int idAprendiz = MtObtenerIdAprendiz();
 
-            if (lista.Count > 0)
+            // Cabecera con datos del aprendiz
+            Modelo.Aprendiz aprendiz = oAprendizL.MtObtenerAprendizPorId(idAprendiz);
+
+            if (aprendiz == null)
             {
-                txtFicha.Text =
-                    lista[0].CodigoFicha;
-            }
-        }
-
-        public void MtCargarPlan(int idAprendiz)
-        {
-            PlanMejoramiento plan =
-                oAprendizPlan.MtObtenerPlanActivo(idAprendiz);
-
-            if (plan == null)
-            {
-                pnlCrearPlan.Visible = true;
-
-                pnlPlanExistente.Visible = false;
-
+                Response.Redirect("Aprendices.aspx");
                 return;
             }
 
-            hfIdPlan.Value =
-                plan.Id.ToString();
+            lblNombreCompleto.Text = aprendiz.Nombre + " " + aprendiz.Apellido;
+            lblDocumento.Text = aprendiz.NumeroDocumento;
+            lblCorreo.Text = aprendiz.Correo;
 
-            txtPlan.Text =
-                plan.Nombre;
+            // Iniciales para el avatar
+            string ini1 = aprendiz.Nombre.Length > 0 ? aprendiz.Nombre[0].ToString() : "";
+            string ini2 = aprendiz.Apellido.Length > 0 ? aprendiz.Apellido[0].ToString() : "";
+            lblIniciales.Text = (ini1 + ini2).ToUpper();
 
-            txtTipoPlan.Text =
-                plan.TipoPlan.Nombre;
+            // Badge de estado académico (la clasificación vive en el modelo EstadoAcademico)
+            if (aprendiz.EstadoAcademico != null)
+            {
+                lblEstadoAcademico.Text = aprendiz.EstadoAcademico.Nombre;
+                lblEstadoAcademico.CssClass = "badge-estado " + aprendiz.EstadoAcademico.CssBadge;
+            }
+            else
+            {
+                lblEstadoAcademico.Text = "";
+                lblEstadoAcademico.CssClass = "badge-estado badge-otro";
+            }
 
-            txtFechaAsignacion.Text =
-                plan.FechaAsignacion.ToShortDateString();
+            // Lista de planes
+            var planes = oAprendizPlanL.MtListarPlanesPorAprendiz(idAprendiz);
 
-            txtFechaLimitePlan.Text =
-                plan.FechaLimite.ToShortDateString();
-
-            pnlCrearPlan.Visible = false;
-
-            pnlPlanExistente.Visible = true;
+            if (planes.Count == 0)
+            {
+                pnlSinPlanes.Visible = true;
+                rptPlanes.Visible = false;
+            }
+            else
+            {
+                rptPlanes.DataSource = planes;
+                rptPlanes.DataBind();
+            }
         }
 
-        protected void btnCrearPlan_Click(object sender, EventArgs e)
+        protected void rptPlanes_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            UsuarioSesion usuario = Session["Usuario"] as UsuarioSesion;
+            int idPlan = Convert.ToInt32(e.CommandArgument);
+            int idAprendiz = MtObtenerIdAprendiz();
 
-            PlanMejoramiento plan = new PlanMejoramiento()
+            if (e.CommandName == "Editar")
             {
-                Nombre = txtNombrePlan.Text,
-
-                FechaAsignacion = DateTime.Now,
-
-                FechaLimite =
-                Convert.ToDateTime(txtFechaLimite.Text),
-
-                TipoPlan = new TipoPlan()
-                {
-                    Id = 1
-                },
-
-                Instructor = new Modelo.Instructor()
-                {
-                    Id = usuario.Id
-                }
-            };
-
-            int idPlan = oPlan.MtRegistrarPlanMejoramiento(plan);
-
-            if (idPlan > 0)
+                Response.Redirect("EditarPlan.aspx?idPlan=" + idPlan + "&idAprendiz=" + idAprendiz);
+            }
+            else if (e.CommandName == "Evaluar")
             {
-                AprendizPlan aprendizPlan = new AprendizPlan()
-                {
-                    Aprendiz = new Modelo.Aprendiz()
-                    {
-                        Id = Convert.ToInt32(hfIdAprendiz.Value)
-                    },
-
-                    PlanMejoramiento = new PlanMejoramiento()
-                    {
-                        Id = idPlan
-                    },
-
-                    Estado = "Activo",
-
-                    Observacion = txtObservacion.Text,
-
-                    FechaAsignacion = DateTime.Now
-                };
-
-                bool resultado = oAprendizPlan.MtRegistrarAprendizPlan(aprendizPlan);
-
-                if (resultado)
-                {
-                    MtCargarPlan(
-                        Convert.ToInt32(hfIdAprendiz.Value));
-
-                    ClientScript.RegisterStartupScript(
-                        this.GetType(),
-                        "mensaje",
-                        "alert('Plan creado correctamente');",
-                        true);
-                }
+                Response.Redirect("EvaluarPlan.aspx?idPlan=" + idPlan + "&idAprendiz=" + idAprendiz);
             }
         }
     }

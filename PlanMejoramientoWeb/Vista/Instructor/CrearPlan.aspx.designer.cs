@@ -11,70 +11,88 @@ namespace PlanMejoramientoWeb.Vista.Instructor
 {
 
 
-    public partial class GestionarPlan
+    public partial class CrearPlan
     {
 
         /// <summary>
-        /// Control lblIniciales.
+        /// Control rbInterno.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblIniciales;
+        protected global::System.Web.UI.WebControls.RadioButton rbInterno;
 
         /// <summary>
-        /// Control lblNombreCompleto.
+        /// Control rbComite.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblNombreCompleto;
+        protected global::System.Web.UI.WebControls.RadioButton rbComite;
 
         /// <summary>
-        /// Control lblDocumento.
+        /// Control ddlAprendiz.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblDocumento;
+        protected global::System.Web.UI.WebControls.DropDownList ddlAprendiz;
 
         /// <summary>
-        /// Control lblCorreo.
+        /// Control txtNombrePlan.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCorreo;
+        protected global::System.Web.UI.WebControls.TextBox txtNombrePlan;
 
         /// <summary>
-        /// Control lblEstadoAcademico.
+        /// Control txtFechaLimite.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEstadoAcademico;
+        protected global::System.Web.UI.WebControls.TextBox txtFechaLimite;
 
         /// <summary>
-        /// Control rptPlanes.
+        /// Control txtObservacion.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptPlanes;
+        protected global::System.Web.UI.WebControls.TextBox txtObservacion;
 
         /// <summary>
-        /// Control pnlSinPlanes.
+        /// Control btnGuardar.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlSinPlanes;
+        protected global::System.Web.UI.WebControls.Button btnGuardar;
+
+        /// <summary>
+        /// Control pnlMensaje.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlMensaje;
+
+        /// <summary>
+        /// Control lblMensaje.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMensaje;
     }
 }
