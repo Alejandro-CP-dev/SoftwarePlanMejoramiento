@@ -29,6 +29,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                 btnActualizar.Visible = false;
 
             }
+            // en registro nuevo siempre inicia en "En Formación" (Id=1)
             ddlEstadoAcademico.Visible = false;
         }
 

@@ -312,10 +312,14 @@
                     <h5>Asignar Supervisor a Plan De Mejoramiento</h5>
                 </div>
                 <div class="modal-body">
-                    <span class="modal-label">Planes Mejoramiento</span>
+                    <span class="modal-label">Plan de Mejoramiento</span>
                     <asp:Label ID="lblPlanMejoramiento" runat="server" CssClass="modal-name" />
+
                     <span class="modal-label">Supervisores</span>
                     <asp:DropDownList ID="ddlSupervisorAsignar" runat="server" CssClass="modal-select" />
+
+                    <span class="modal-label" style="margin-top: 12px;">Indicación / Orientación</span>
+                    <asp:TextBox ID="txtIndicacion" runat="server" TextMode="MultiLine" Rows="3" CssClass="modal-select" />
                 </div>
                 <div class="modal-footer">
                     <asp:Button ID="btnGuardarAsignacion" runat="server"
@@ -337,33 +341,27 @@
 
         <Columns>
 
-            <asp:TemplateField HeaderText="Numero Documento">
+            <asp:TemplateField HeaderText="Documento">
                 <ItemTemplate>
                     <%# Eval("Aprendiz.NumeroDocumento") %>
                 </ItemTemplate>
-
             </asp:TemplateField>
 
-            <asp:TemplateField HeaderText="Nombre">
+            <asp:TemplateField HeaderText="Plan">
                 <ItemTemplate>
-                    <%# Eval("Aprendiz.Nombre") %>
+                    <%# Eval("PlanMejoramiento.Nombre") %>
                 </ItemTemplate>
             </asp:TemplateField>
 
-            <asp:TemplateField HeaderText="Apellido">
+            <asp:TemplateField HeaderText="Fecha Asignación">
                 <ItemTemplate>
-                    <%# Eval("Aprendiz.Apellido") %>
+                    <%# Eval("PlanMejoramiento.FechaAsignacion", "{0:dd/MM/yyyy}") %>
                 </ItemTemplate>
             </asp:TemplateField>
 
-            <asp:TemplateField HeaderText="Estado Académico">
+            <asp:TemplateField HeaderText="Fecha Límite">
                 <ItemTemplate>
-                    <%# Eval("Aprendiz.EstadoAcademico.Nombre") %>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField HeaderText="Tipo de Plan">
-                <ItemTemplate>
-                    <%# Eval("PlanMejoramiento.TipoPlan.Nombre") %>
+                    <%# Eval("PlanMejoramiento.FechaLimite", "{0:dd/MM/yyyy}") %>
                 </ItemTemplate>
             </asp:TemplateField>
 

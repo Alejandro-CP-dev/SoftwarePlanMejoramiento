@@ -14,6 +14,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
         private FichaL oFicha = new FichaL();
         private ProgramaL oPrograma = new ProgramaL();
         private JornadaL oJornada = new JornadaL();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -70,14 +71,51 @@ namespace PlanMejoramientoWeb.Vista.Administrador
             btnGuardar.Visible = true;
             btnActualizar.Visible = false;
         }
-        protected void btnGuardar_Click(object sender, EventArgs e)
+
+        private void MtMostrarMensaje(string mensaje)
         {
-            Modelo.Ficha ficha = new Modelo.Ficha()
+            ClientScript.RegisterStartupScript(
+                this.GetType(),
+                "mensaje",
+                "alert('" + mensaje.Replace("'", "\\'") + "');",
+                true);
+        }
+
+   
+        private Modelo.Ficha MtConstruirFichaDesdeFormulario()
+        {
+            if (string.IsNullOrWhiteSpace(txtFechaInicio.Text) ||
+                string.IsNullOrWhiteSpace(txtFechaFinalizacion.Text))
             {
-                CodigoFicha = txtCodigoFicha.Text,
-                FechaInicio = Convert.ToDateTime(txtFechaInicio.Text),
-                FechaFinalizacion = Convert.ToDateTime(txtFechaFinalizacion.Text),
-                Descripcion = txtDescripcion.Text,
+                MtMostrarMensaje("Debe ingresar las fechas de inicio y finalización.");
+                return null;
+            }
+
+            if (!DateTime.TryParse(txtFechaInicio.Text, out DateTime fechaInicio) ||
+                !DateTime.TryParse(txtFechaFinalizacion.Text, out DateTime fechaFin))
+            {
+                MtMostrarMensaje("Las fechas ingresadas no son válidas.");
+                return null;
+            }
+
+            if (ddlPrograma.SelectedValue == "0")
+            {
+                MtMostrarMensaje("Debe seleccionar un programa.");
+                return null;
+            }
+
+            if (ddlJornada.SelectedValue == "0")
+            {
+                MtMostrarMensaje("Debe seleccionar una jornada.");
+                return null;
+            }
+
+            return new Modelo.Ficha()
+            {
+                CodigoFicha = txtCodigoFicha.Text.Trim(),
+                FechaInicio = fechaInicio,
+                FechaFinalizacion = fechaFin,
+                Descripcion = txtDescripcion.Text.Trim(),
                 Estado = ddlEstado.SelectedValue,
 
                 Programa = new Programa()
@@ -90,62 +128,57 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                     Id = Convert.ToInt32(ddlJornada.SelectedValue)
                 }
             };
+        }
 
-            bool resultado = oFicha.MtRegistrarFicha(ficha);
+        protected void btnGuardar_Click(object sender, EventArgs e)
+        {
+            Modelo.Ficha ficha = MtConstruirFichaDesdeFormulario();
+            if (ficha == null)
+            {
+                return;
+            }
 
-            if (resultado)
+            string error = oFicha.MtRegistrarFicha(ficha);
+
+            if (error == null)
             {
                 MtCargarFichas();
                 MtLimpiarFormulario();
+                MtMostrarMensaje("Ficha registrada correctamente");
+            }
+            else
+            {
+                MtMostrarMensaje(error);
+            }
+        }
 
-                ClientScript.RegisterStartupScript(
-                    this.GetType(),
-                    "mensaje",
-                    "alert('Ficha registrada correctamente');",
-                    true);
+        protected void btnActualizar_Click(object sender, EventArgs e)
+        {
+            Modelo.Ficha ficha = MtConstruirFichaDesdeFormulario();
+            if (ficha == null)
+            {
+                return;
+            }
+
+            ficha.Id = Convert.ToInt32(hfIdFicha.Value);
+
+            string error = oFicha.MtActualizarFicha(ficha);
+
+            if (error == null)
+            {
+                MtCargarFichas();
+                MtLimpiarFormulario();
+                MtMostrarMensaje("Ficha actualizada correctamente");
+            }
+            else
+            {
+                MtMostrarMensaje(error);
             }
         }
 
         protected void btnLimpiar_Click(object sender, EventArgs e)
         {
             MtLimpiarFormulario();
-        }
-
-        protected void btnActualizar_Click(object sender, EventArgs e)
-        {
-            Modelo.Ficha ficha = new Modelo.Ficha()
-            {
-                Id = Convert.ToInt32(hfIdFicha.Value),
-                CodigoFicha = txtCodigoFicha.Text,
-                FechaInicio = Convert.ToDateTime(txtFechaInicio.Text),
-                FechaFinalizacion = Convert.ToDateTime(txtFechaFinalizacion.Text),
-                Descripcion = txtDescripcion.Text,
-                Estado = ddlEstado.SelectedValue,
-
-                Programa = new Programa()
-                {
-                    Id = Convert.ToInt32(ddlPrograma.SelectedValue)
-                },
-
-                Jornada = new Jornada()
-                {
-                    Id = Convert.ToInt32(ddlJornada.SelectedValue)
-                }
-            };
-
-            bool resultado = oFicha.MtActualizarFicha(ficha);
-
-            if (resultado)
-            {
-                MtCargarFichas();
-                MtLimpiarFormulario();
-
-                ClientScript.RegisterStartupScript(
-                    this.GetType(),
-                    "mensaje",
-                    "alert('Ficha actualizada correctamente');",
-                    true);
-            }
         }
 
         protected void btnEditar_Click(object sender, EventArgs e)
@@ -180,17 +213,16 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
             int id = Convert.ToInt32(btn.CommandArgument);
 
-            bool resultado = oFicha.MtEliminarFicha(id);
+            string error = oFicha.MtEliminarFicha(id);
 
-            if (resultado)
+            if (error == null)
             {
                 MtCargarFichas();
-
-                ClientScript.RegisterStartupScript(
-                    this.GetType(),
-                    "mensaje",
-                    "alert('Ficha eliminada correctamente');",
-                    true);
+                MtMostrarMensaje("Ficha eliminada correctamente");
+            }
+            else
+            {
+                MtMostrarMensaje(error);
             }
         }
     }

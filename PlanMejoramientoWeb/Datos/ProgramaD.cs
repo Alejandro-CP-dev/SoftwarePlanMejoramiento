@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Web;
 
 namespace PlanMejoramientoWeb.Datos
@@ -34,7 +33,6 @@ namespace PlanMejoramientoWeb.Datos
             }
         }
 
-
         public List<Programa> MtListarPrograma()
         {
             List<Programa> lista = new List<Programa>();
@@ -51,12 +49,12 @@ namespace PlanMejoramientoWeb.Datos
                                         p.Version,
                                         p.Duracion,
                                         p.Estado,
-
+                                        nf.Id AS IdNivel,
                                         nf.Nombre AS NivelFormacion
-
                                     FROM Programa p
                                     INNER JOIN NivelFormacion nf
                                         ON p.IdNivel = nf.Id";
+
                 SqlCommand cmd = new SqlCommand(consulta, conn);
                 SqlDataReader dr = cmd.ExecuteReader();
 
@@ -65,14 +63,15 @@ namespace PlanMejoramientoWeb.Datos
                     lista.Add(new Programa()
                     {
                         Id = Convert.ToInt32(dr["Id"]),
-                        Codigo = dr["Codigo"].ToString(),
-                        Nombre = dr["Nombre"].ToString(),
-                        Version = dr["Version"].ToString(),
-                        Duracion = Convert.ToInt32(dr["Duracion"]),
-                        Estado = dr["Estado"].ToString(),
+                        Codigo = dr["Codigo"] == DBNull.Value ? "" : dr["Codigo"].ToString(),
+                        Nombre = dr["Nombre"] == DBNull.Value ? "" : dr["Nombre"].ToString(),
+                        Version = dr["Version"] == DBNull.Value ? "" : dr["Version"].ToString(),
+                        Duracion = dr["Duracion"] == DBNull.Value ? 0 : Convert.ToInt32(dr["Duracion"]),
+                        Estado = dr["Estado"] == DBNull.Value ? "" : dr["Estado"].ToString(),
                         NivelFormacion = new NivelFormacion
                         {
-                            Nombre = dr["NivelFormacion"].ToString()
+                            Id = Convert.ToInt32(dr["IdNivel"]),
+                            Nombre = dr["NivelFormacion"] == DBNull.Value ? "" : dr["NivelFormacion"].ToString()
                         }
                     });
                 }
@@ -87,15 +86,22 @@ namespace PlanMejoramientoWeb.Datos
             using (SqlConnection conn = ConexionDB.MtAbrirConexion())
             {
                 conn.Open();
+
                 string consulta = @"
                                     SELECT
-                                        p.*,
+                                        p.Id,
+                                        p.Codigo,
+                                        p.Nombre,
+                                        p.Version,
+                                        p.Duracion,
+                                        p.Estado,
                                         nf.Id AS NivelId,
                                         nf.Nombre AS NivelFormacion
                                     FROM Programa p
                                     INNER JOIN NivelFormacion nf
                                         ON p.IdNivel = nf.Id
                                     WHERE p.Id = @Id";
+
                 SqlCommand cmd = new SqlCommand(consulta, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -105,15 +111,15 @@ namespace PlanMejoramientoWeb.Datos
                     programa = new Programa()
                     {
                         Id = Convert.ToInt32(dr["Id"]),
-                        Codigo = dr["Codigo"].ToString(),
-                        Nombre = dr["Nombre"].ToString(),
-                        Version = dr["Version"].ToString(),
-                        Duracion = (int)dr["Duracion"],
-                        Estado = dr["Estado"].ToString(),
+                        Codigo = dr["Codigo"] == DBNull.Value ? "" : dr["Codigo"].ToString(),
+                        Nombre = dr["Nombre"] == DBNull.Value ? "" : dr["Nombre"].ToString(),
+                        Version = dr["Version"] == DBNull.Value ? "" : dr["Version"].ToString(),
+                        Duracion = dr["Duracion"] == DBNull.Value ? 0 : Convert.ToInt32(dr["Duracion"]),
+                        Estado = dr["Estado"] == DBNull.Value ? "" : dr["Estado"].ToString(),
                         NivelFormacion = new NivelFormacion
                         {
                             Id = Convert.ToInt32(dr["NivelId"]),
-                            Nombre = dr["NivelFormacion"].ToString()
+                            Nombre = dr["NivelFormacion"] == DBNull.Value ? "" : dr["NivelFormacion"].ToString()
                         }
                     };
                 }
@@ -128,13 +134,14 @@ namespace PlanMejoramientoWeb.Datos
                 conn.Open();
 
                 string consulta = @"UPDATE Programa SET
-                                        Codigo=@Codigo,
-                                        Nombre=@Nombre,
-                                        Version=@Version,
-                                        Duracion=@Duracion,
-                                        Estado=@Estado,
-                                        IdNivel=@IdNivel
-                                        WHERE Id=@Id";
+                                        Codigo = @Codigo,
+                                        Nombre = @Nombre,
+                                        Version = @Version,
+                                        Duracion = @Duracion,
+                                        Estado = @Estado,
+                                        IdNivel = @IdNivel
+                                        WHERE Id = @Id";
+
                 SqlCommand cmd = new SqlCommand(consulta, conn);
 
                 cmd.Parameters.AddWithValue("@Id", programa.Id);
@@ -149,16 +156,32 @@ namespace PlanMejoramientoWeb.Datos
             }
         }
 
+        // Verifica si el programa tiene fichas asociadas (no se puede eliminar si las tiene)
+        public bool MtTieneFichasAsociadas(int idPrograma)
+        {
+            using (SqlConnection conn = ConexionDB.MtAbrirConexion())
+            {
+                conn.Open();
+
+                string consulta = "SELECT COUNT(*) FROM Ficha WHERE IdPrograma = @IdPrograma";
+
+                SqlCommand cmd = new SqlCommand(consulta, conn);
+                cmd.Parameters.AddWithValue("@IdPrograma", idPrograma);
+
+                int total = (int)cmd.ExecuteScalar();
+                return total > 0;
+            }
+        }
+
         public bool MtEliminarPrograma(int id)
         {
             using (SqlConnection conn = ConexionDB.MtAbrirConexion())
             {
                 conn.Open();
 
-                string consulta = "DELETE FROM Programa WHERE Id=@Id";
+                string consulta = "DELETE FROM Programa WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(consulta, conn);
-
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 return cmd.ExecuteNonQuery() > 0;

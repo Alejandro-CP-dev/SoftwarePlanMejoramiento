@@ -139,6 +139,7 @@
     <Compile Include="Datos\ProgramaD.cs" />
     <Compile Include="Logica\AprendizL.cs" />
     <Compile Include="Logica\AprendizPlanL.cs" />
+    <Compile Include="Modelo\Asignacion.cs" />
     <Compile Include="Logica\EstadoAcademicoL.cs" />
     <Compile Include="Logica\EvaluacionPlanL.cs" />
     <Compile Include="Logica\FichaAprendizL.cs" />

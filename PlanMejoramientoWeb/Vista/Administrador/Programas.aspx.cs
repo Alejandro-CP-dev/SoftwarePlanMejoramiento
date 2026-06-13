@@ -13,6 +13,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
     {
         private ProgramaL oPrograma = new ProgramaL();
         private NivelFormacionL oNivelFormacion = new NivelFormacionL();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -23,6 +24,7 @@ namespace PlanMejoramientoWeb.Vista.Administrador
                 btnActualizar.Visible = false;
             }
         }
+
         public void MtCargarNiveles()
         {
             ddlNivelFormacion.DataSource = oNivelFormacion.MtListarNivel();
@@ -33,11 +35,13 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
             ddlNivelFormacion.Items.Insert(0, new ListItem("-- Seleccione --", "0"));
         }
+
         public void MtCargarProgramas()
         {
             gvProgramas.DataSource = oPrograma.MtListarPrograma();
             gvProgramas.DataBind();
         }
+
         public void MtLimpiarFormulario()
         {
             hfIdPrograma.Value = "";
@@ -54,65 +58,86 @@ namespace PlanMejoramientoWeb.Vista.Administrador
             btnActualizar.Visible = false;
         }
 
-
-        protected void btnGuardar_Click(object sender, EventArgs e)
+        private void MtMostrarMensaje(string mensaje)
         {
-            Programa programa = new Programa
+            ClientScript.RegisterStartupScript(
+                this.GetType(),
+                "mensaje",
+                "alert('" + mensaje.Replace("'", "\\'") + "');",
+                true);
+        }
+
+        private Programa MtConstruirProgramaDesdeFormulario()
+        {
+            if (ddlNivelFormacion.SelectedValue == "0")
             {
-                Codigo = txtCodigo.Text,
-                Nombre = txtNombre.Text,
-                Version = txtVersion.Text,
-                Duracion = Convert.ToInt32(txtDuracion.Text),
+                MtMostrarMensaje("Debe seleccionar un nivel de formación.");
+                return null;
+            }
+
+            if (!int.TryParse(txtDuracion.Text, out int duracion))
+            {
+                MtMostrarMensaje("La duración debe ser un número válido.");
+                return null;
+            }
+
+            return new Programa
+            {
+                Codigo = txtCodigo.Text.Trim(),
+                Nombre = txtNombre.Text.Trim(),
+                Version = txtVersion.Text.Trim(),
+                Duracion = duracion,
                 Estado = ddlEstado.SelectedValue,
                 NivelFormacion = new NivelFormacion()
                 {
                     Id = Convert.ToInt32(ddlNivelFormacion.SelectedValue)
                 }
             };
+        }
 
-            bool resultado = oPrograma.MtRegistrarPrograma(programa);
+        protected void btnGuardar_Click(object sender, EventArgs e)
+        {
+            Programa programa = MtConstruirProgramaDesdeFormulario();
+            if (programa == null)
+            {
+                return;
+            }
 
-            if (resultado)
+            string error = oPrograma.MtRegistrarPrograma(programa);
+
+            if (error == null)
             {
                 MtCargarProgramas();
                 MtLimpiarFormulario();
-
-                ClientScript.RegisterStartupScript(
-                    this.GetType(),
-                    "mensaje",
-                    "alert('Programa registrado correctamente');",
-                    true);
+                MtMostrarMensaje("Programa registrado correctamente");
+            }
+            else
+            {
+                MtMostrarMensaje(error);
             }
         }
 
         protected void btnActualizar_Click(object sender, EventArgs e)
         {
-            Programa programa = new Programa()
+            Programa programa = MtConstruirProgramaDesdeFormulario();
+            if (programa == null)
             {
-                Id = Convert.ToInt32(hfIdPrograma.Value),
-                Codigo = txtCodigo.Text,
-                Nombre = txtNombre.Text,
-                Version = txtVersion.Text,
-                Duracion = Convert.ToInt32(txtDuracion.Text),
-                Estado = ddlEstado.SelectedValue,
-                NivelFormacion = new NivelFormacion()
-                {
-                    Id = Convert.ToInt32(ddlNivelFormacion.SelectedValue)
-                }
-            };
+                return;
+            }
 
-            bool resultado = oPrograma.MtActualizarPrograma(programa);
+            programa.Id = Convert.ToInt32(hfIdPrograma.Value);
 
-            if (resultado)
+            string error = oPrograma.MtActualizarPrograma(programa);
+
+            if (error == null)
             {
                 MtCargarProgramas();
                 MtLimpiarFormulario();
-
-                ClientScript.RegisterStartupScript(
-                    this.GetType(),
-                    "mensaje",
-                    "alert('Programa Actualizado correctamente');",
-                    true);
+                MtMostrarMensaje("Programa actualizado correctamente");
+            }
+            else
+            {
+                MtMostrarMensaje(error);
             }
         }
 
@@ -151,17 +176,16 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
             int id = Convert.ToInt32(btn.CommandArgument);
 
-            bool resultado = oPrograma.MtEliminarPrograma(id);
+            string error = oPrograma.MtEliminarPrograma(id);
 
-            if (resultado)
+            if (error == null)
             {
                 MtCargarProgramas();
-
-                ClientScript.RegisterStartupScript(
-                    this.GetType(),
-                    "mensaje",
-                    "alert('Programa eliminado correctamente');",
-                    true);
+                MtMostrarMensaje("Programa eliminado correctamente");
+            }
+            else
+            {
+                MtMostrarMensaje(error);
             }
         }
     }

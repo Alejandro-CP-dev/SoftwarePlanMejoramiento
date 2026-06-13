@@ -11,9 +11,19 @@ namespace PlanMejoramientoWeb.Logica
     { 
         private InstructorD oInstructorD = new InstructorD();
 
-        public bool MtRegistrarInstructor(Instructor instructor)
+        public string MtRegistrarInstructor(Instructor instructor)
         {
-            return oInstructorD.MtRegistrarInstructor(instructor);
+            if (string.IsNullOrWhiteSpace(instructor.Nombre) || string.IsNullOrWhiteSpace(instructor.Apellido))
+                return "Nombre y apellido son obligatorios.";
+
+            if (string.IsNullOrWhiteSpace(instructor.Correo))
+                return "El correo es obligatorio.";
+
+            if (string.IsNullOrWhiteSpace(instructor.Contrasena))
+                return "La contraseña es obligatoria.";
+
+            bool ok = oInstructorD.MtRegistrarInstructor(instructor);
+            return ok ? null : "No se pudo registrar el instructor.";
         }
 
         public List<Instructor> MtListarInstructor()

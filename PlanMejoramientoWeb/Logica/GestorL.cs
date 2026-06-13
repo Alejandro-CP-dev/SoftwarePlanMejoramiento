@@ -11,15 +11,35 @@ namespace PlanMejoramientoWeb.Logica
     {
         GestorD oDatos = new GestorD();
 
-        public List<AprendizPlan> MtListarPlanMejoramientoPorAprendiz(int idAprendiz)
+        public List<AprendizPlan> MtListarPlanMejoramientoPorCentro(int idCentro)
         {
-            return oDatos.MtListarPlanesPorAprendiz(idAprendiz);
+            return oDatos.MtListarPlanesPorCentro(idCentro);
         }
 
-        public bool MtAsignarSupervisorAPlan(PlanMejoramiento asignacion)
+        public string MtAsignarSupervisorAPlan(Asignacion asignacion, int idInstructorCreador)
         {
-           
-            return oDatos.MtAsignarSupervisorAPlan(asignacion);
+            if (asignacion.Instructor.Id == idInstructorCreador)
+            {
+            }
+
+            if (asignacion.Instructor.Id <= 0)
+            {
+                return "Debe seleccionar un instructor supervisor válido.";
+            }
+
+            if (asignacion.Gestor == null || asignacion.Gestor.Id <= 0)
+            {
+                return "No se identificó el gestor que realiza la asignación.";
+            }
+
+            bool resultado = oDatos.MtAsignarSupervisorAPlan(asignacion);
+
+            return resultado ? null : "No se pudo registrar la asignación.";
+        }
+
+        public Asignacion MtObtenerAsignacionVigente(int idPlanMejoramiento)
+        {
+            return oDatos.MtObtenerAsignacionVigente(idPlanMejoramiento);
         }
     }
 }

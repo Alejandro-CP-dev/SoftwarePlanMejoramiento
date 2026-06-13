@@ -71,6 +71,7 @@ namespace PlanMejoramientoWeb.Datos
                         Nombre = drGestor["Nombre"].ToString(),
                         Apellido = drGestor["Apellido"].ToString(),
                         Correo = drGestor["Correo"].ToString(),
+                        IdCentro = drGestor["IdCentro"] == DBNull.Value ? 0 : Convert.ToInt32(drGestor["IdCentro"]),
 
                         Rol = "Gestor"
                     };

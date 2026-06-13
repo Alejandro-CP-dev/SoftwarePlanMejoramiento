@@ -113,7 +113,7 @@ namespace PlanMejoramientoWeb.Datos
 
                 cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
 
-                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 

@@ -23,6 +23,5 @@ namespace PlanMejoramientoWeb.Modelo
 
         public string Contrasena { get; set; }
         public CentroFormacion Centro { get; set; }
-        public PlanMejoramiento PlanMejoramiento { get; set; }
     }
 }

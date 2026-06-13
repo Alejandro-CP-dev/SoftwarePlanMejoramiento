@@ -107,31 +107,31 @@ namespace PlanMejoramientoWeb.Vista.Administrador
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
-            Modelo.Instructor instructor = new Modelo.Instructor()
-            {
-                TipoDocumento = ddlTipoDocumento.SelectedValue,
-                NumeroDocumento = txtNumeroDocumento.Text,
-                Nombre = txtNombre.Text,
-                Apellido = txtApellido.Text,
-                Correo = txtCorreo.Text,
-                Telefono = txtTelefono.Text,
-                Contrasena = txtContrasena.Text,
-                Estado = ddlEstado.SelectedValue
-            };
+            //Modelo.Instructor instructor = new Modelo.Instructor()
+            //{
+            //    TipoDocumento = ddlTipoDocumento.SelectedValue,
+            //    NumeroDocumento = txtNumeroDocumento.Text,
+            //    Nombre = txtNombre.Text,
+            //    Apellido = txtApellido.Text,
+            //    Correo = txtCorreo.Text,
+            //    Telefono = txtTelefono.Text,
+            //    Contrasena = txtContrasena.Text,
+            //    Estado = ddlEstado.SelectedValue
+            //};
 
-            bool resultado = oInstructor.MtRegistrarInstructor(instructor);
+            //bool resultado = oInstructor.MtRegistrarInstructor(instructor);
 
-            if (resultado)
-            {
-                MtCargarInstructores();
-                MtLimpiarFormulario();
+            //if (resultado)
+            //{
+            //    MtCargarInstructores();
+            //    MtLimpiarFormulario();
 
-                ClientScript.RegisterStartupScript(
-                    this.GetType(),
-                    "mensaje",
-                    "alert('Instructor registrado correctamente');",
-                    true);
-            }
+            //    ClientScript.RegisterStartupScript(
+            //        this.GetType(),
+            //        "mensaje",
+            //        "alert('Instructor registrado correctamente');",
+            //        true);
+            //}
 
 
         }

@@ -13,7 +13,7 @@ namespace PlanMejoramientoWeb.Vista
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         protected void btnIngresar_Click(object sender, EventArgs e)
@@ -42,15 +42,22 @@ namespace PlanMejoramientoWeb.Vista
                     case "Aprendiz":
                         Response.Redirect("Aprendiz/Inicio.aspx");
                         break;
+                    default:
+                        ClientScript.RegisterStartupScript(
+                            this.GetType(),
+                            "mensaje",
+                            "alert('Rol no reconocido');",
+                            true);
+                        break;
                 }
             }
             else
             {
-                    ClientScript.RegisterStartupScript(
-                        this.GetType(),
-                        "mensaje",
-                        "alert('Correo o contraseña incorrectos');",
-                        true);  
+                ClientScript.RegisterStartupScript(
+                    this.GetType(),
+                    "mensaje",
+                    "alert('Correo o contraseña incorrectos');",
+                    true);
             }
         }
     }
